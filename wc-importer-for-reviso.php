@@ -47,7 +47,6 @@ function load_wc_importer_for_reviso() {
 	require_once( WCIFR_INCLUDES . 'class-wcifr-products.php' );
 	require_once( WCIFR_INCLUDES . 'class-wcifr-orders.php' );
 	require_once( WCIFR_INCLUDES . 'wcifr-invoice.php' );
-	require_once( WCIFR_INCLUDES . 'wc-checkout-fields/class-wcifr-checkout-fields.php' );
 }
 add_action( 'after_setup_theme', 'load_wc_importer_for_reviso', 1 );
 
