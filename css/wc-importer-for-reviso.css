@@ -2,15 +2,15 @@
  * Style sheet
  *
  * @author ilGhera
- * @package wc-exporter-for-reviso/css
- * @version 0.9.5
+ * @package wc-importer-for-reviso/css
+ * @version 0.9.0
  */
 
-.wcefr-admin {
+.wcifr-admin {
 	display: none;
 }
 
-.wcefr-form {
+.wcifr-form {
 	margin:3rem 0 0 0;
 }
 
@@ -19,11 +19,11 @@
 	border-bottom: 1px solid #ccc;
 }
 
-#wcefr-products-submit {
+#wcifr-products-submit {
 	margin:25px 0 25px 0;	
 }
 
-.wcefr-copy-url span {
+.wcifr-copy-url span {
 	display: inline-block;
 	padding: 4px 10px;
 	color: #FFF;
@@ -34,7 +34,7 @@
 	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 }
 
-.wcefr-copy-url span.wcefr-red {
+.wcifr-copy-url span.wcifr-red {
 	background: red;
 }
 
@@ -88,11 +88,11 @@ a.message {
 	top: 2px;
 }
 
-.wcefr-form label { 
+.wcifr-form label { 
 	display:inline-block;
 }
 
-.wcefr-form.disconnected {
+.wcifr-form.disconnected {
 	opacity: 0.5;
 }
 
@@ -111,7 +111,7 @@ a.message {
     opacity:0.4;
 }
 
-#wcefr-orders span.wcefr-copy-url {
+#wcifr-orders span.wcifr-copy-url {
 	display: inline-block;
 	margin-left: 10px;
 	padding: 4px 10px;
@@ -123,20 +123,20 @@ a.message {
 	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 }
 
-.wcefr {
+.wcifr {
 	list-style: inside disc;	
 }
 
-.wcefr li {
+.wcifr li {
 	padding-left:15px;	
 }
 
-h3.wcefr {
+h3.wcifr {
 	font-size: 1.3em;
 	margin: 2em 0px 1em 0;
 }
 
-h3.wcefr.main {
+h3.wcifr.main {
 	font-size: 32px;
 	font-weight: 200;
 	line-height: 35px;
@@ -158,11 +158,11 @@ h3.wcefr.main {
 	clear:both;
 }
 
-form#wcefr-premium-key {
+form#wcifr-premium-key {
 	margin: 2rem 0;
 }
 
-form#wcefr-premium-key label {
+form#wcifr-premium-key label {
 	font-size: 14px;
 	font-weight: bold;
 	display: block;
@@ -170,15 +170,15 @@ form#wcefr-premium-key label {
 }
 
 
-form#wcefr-premium-key input[type="text"] {
+form#wcifr-premium-key input[type="text"] {
 	width: 560px;
 }
 
-form#wcefr-premium-key input.button {
+form#wcifr-premium-key input.button {
 	margin-top: 1rem;
 }
 
-span.wcefr-alert {
+span.wcifr-alert {
 	display: block;
 	margin: 1rem 0 0;
 	padding: 0.6rem;
@@ -187,61 +187,61 @@ span.wcefr-alert {
 	color: #a94442;	
 }
 
-span.wcefr-alert a {
+span.wcifr-alert a {
 	color: #a94442;	
 	text-decoration: underline;
 }
 
-select.wcefr {
+select.wcifr {
 	width: 180px;
 }
 
-.button-primary.wcefr-connect,
-.button-primary.wcefr-disconnect {
+.button-primary.wcifr-connect,
+.button-primary.wcifr-disconnect {
 	display: inline-block;
 	margin-top: 2rem;
 }
 
-.wcefr.red,
-.wcefr-disconnect.red {
+.wcifr.red,
+.wcifr-disconnect.red {
     background: #d9534f;
     border: 1px solid #d9534f;
     color: white;
     text-shadow: none;
 }
 
-.wcefr.red:hover,
-.wcefr-disconnect.red:hover {
+.wcifr.red:hover,
+.wcifr-disconnect.red:hover {
     background: red;
     border: 1px solid red;
     box-shadow: 0 1px 0 red;
 	opacity: 0.8;
 }
 
-h4.wcefr-connection-status {
+h4.wcifr-connection-status {
 	margin-top: 0 !important;
 }
 
-.button-primary.wcefr-disconnect {
+.button-primary.wcifr-disconnect {
 	opacity: 0;
 	display: none;
 }
 
-.wcefr-message {
+.wcifr-message {
 	margin-top: 3rem;
 	width: 600px;
 }
 
-.wcefr-message .alert i {
+.wcifr-message .alert i {
 	padding-right: 1rem;
 }
 
-.wcefr-loading {
+.wcifr-loading {
 	display: block;
 	text-align: center; 
 }
 
-.wcefr-number-series-receipts {
+.wcifr-number-series-receipts {
     margin-top: 20px;
 }
 

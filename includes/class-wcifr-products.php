@@ -3,10 +3,10 @@
  * Export products to Reviso
  *
  * @author ilGhera
- * @package wc-exporter-for-reviso/includes
- * @since 0.9.4
+ * @package wc-importer-for-reviso/includes
+ * @since 0.9.0
  */
-class WCEFR_Products {
+class WCIFR_Products {
 
 	/**
 	 * Class constructor
@@ -17,14 +17,14 @@ class WCEFR_Products {
 
 		if ( $init ) {
 
-			add_action( 'wp_ajax_wcefr-export-products', array( $this, 'export_products' ) );
-			add_action( 'wp_ajax_wcefr-delete-remote-products', array( $this, 'delete_remote_products' ) );
-			add_action( 'wcefr_export_single_product_event', array( $this, 'export_single_product' ) );
-			add_action( 'wcefr_delete_remote_single_product_event', array( $this, 'delete_remote_single_product' ) );
+			add_action( 'wp_ajax_wcifr-export-products', array( $this, 'export_products' ) );
+			add_action( 'wp_ajax_wcifr-delete-remote-products', array( $this, 'delete_remote_products' ) );
+			add_action( 'wcifr_export_single_product_event', array( $this, 'export_single_product' ) );
+			add_action( 'wcifr_delete_remote_single_product_event', array( $this, 'delete_remote_single_product' ) );
 
 		}
 
-		$this->wcefr_call = new WCEFR_Call();
+		$this->wcifr_call = new WCIFR_Call();
 
 	}
 
@@ -36,7 +36,7 @@ class WCEFR_Products {
     private function inventory_module() {
 
         $output   = false;
-        $response = $this->wcefr_call->call( 'get', 'self' );
+        $response = $this->wcifr_call->call( 'get', 'self' );
 
         if ( is_array( $response ) && isset( $response['modules'] ) ) {
 
@@ -70,7 +70,7 @@ class WCEFR_Products {
 	 */
 	private function get_remote_products() { 
 
-		$output = $this->wcefr_call->call( 'get', 'products?pagesize=1000' );
+		$output = $this->wcifr_call->call( 'get', 'products?pagesize=1000' );
 
 		$results = isset( $output->pagination->results ) ? $output->pagination->results : '';
 
@@ -80,7 +80,7 @@ class WCEFR_Products {
 
 			for ( $i = 1; $i < $limit; $i++ ) {
 
-				$get_products = $this->wcefr_call->call( 'get', 'products?skippages=' . $i . '&pagesize=1000' );
+				$get_products = $this->wcifr_call->call( 'get', 'products?skippages=' . $i . '&pagesize=1000' );
 
 				if ( isset( $get_products->collection ) && ! empty( $get_products->collection ) ) {
 
@@ -111,7 +111,7 @@ class WCEFR_Products {
 
 		$output = true;
 
-		$response = $this->wcefr_call->call( 'get', 'products/' . $sku_ready );
+		$response = $this->wcifr_call->call( 'get', 'products/' . $sku_ready );
 
 		if ( ( isset( $response->collection ) && empty( $response->collection ) ) || isset( $response->errorCode ) ) {
 
@@ -183,18 +183,18 @@ class WCEFR_Products {
 				'accountNumber' => 2201,
 			),
 			'vatType' => array(
-				'name'          => __( 'Sales VAT', 'wc-exporter-for-reviso' ),
+				'name'          => __( 'Sales VAT', 'wc-importer-for-reviso' ),
 				'vatTypeNumber' => 1,
 			),
 			//'name' => 'Acquisti con IVA al ' . $vat_rate . '%',
-			'name'           => sprintf( __( '%d%% VAT purchases', 'wc-exporter-for-reviso' ), $vat_rate ),
+			'name'           => sprintf( __( '%d%% VAT purchases', 'wc-importer-for-reviso' ), $vat_rate ),
 			'ratePercentage' => $vat_rate,
 			'vatReportSetup' => array(
 				'vatReportSetupNumber' => 24, // For reduced rates.
 			),
 		);
 
-		$vat_account = $this->wcefr_call->call( 'post', 'vat-accounts', $args );
+		$vat_account = $this->wcifr_call->call( 'post', 'vat-accounts', $args );
 
 		if ( isset( $vat_account->vatCode ) ) {
 
@@ -217,7 +217,7 @@ class WCEFR_Products {
 
 		$end = '?filter=vatType.vatTypeNumber$eq:1$and:ratePercentage$eq:' . $vat_rate;
 
-		$response = $this->wcefr_call->call( 'get', 'vat-accounts' . $end );
+		$response = $this->wcifr_call->call( 'get', 'vat-accounts' . $end );
 
 		if ( isset( $response->collection ) && ! empty( $response->collection ) ) {
 
@@ -255,13 +255,13 @@ class WCEFR_Products {
 			'balance'       => 0,
 			'debitCredit'   => 'credit',
 			'accountNumber' => $account_number,
-			'name'          => __( 'Sale of goods VAT ' . $vat_rate, 'wc-exporter-for-reviso' ),
+			'name'          => __( 'Sale of goods VAT ' . $vat_rate, 'wc-importer-for-reviso' ),
 			'vatAccount'    => array(
 				'vatCode' => $vat_code,
 			),
 		);
 
-		$account = $this->wcefr_call->call( 'post', 'accounts/', $args );
+		$account = $this->wcifr_call->call( 'post', 'accounts/', $args );
 
 		if ( isset( $account->accountNumber ) && $account_number === $account->accountNumber ) {
 
@@ -282,7 +282,7 @@ class WCEFR_Products {
 
 		$account_number = $vat_rate < 10 ? 580550 . $vat_rate : 58055 . $vat_rate;
 
-		$account = $this->wcefr_call->call( 'get', 'accounts/' . $account_number );
+		$account = $this->wcifr_call->call( 'get', 'accounts/' . $account_number );
 
 		if ( ! isset( $account->accountNumber ) || $account_number != $account->accountNumber ) {
 
@@ -306,7 +306,7 @@ class WCEFR_Products {
 
         $product_group_number = 99 != $vat_rate ? ( intval( 100 + $vat_rate ) ) : $vat_rate;
 		$account_number = $this->get_remote_account_number( $vat_rate );
-		$name           = $vat_rate == $product_group_name ? sprintf( __( '%d%% VAT', 'wc-exporter-for-reviso' ), $vat_rate ) : $product_group_name;
+		$name           = $vat_rate == $product_group_name ? sprintf( __( '%d%% VAT', 'wc-importer-for-reviso' ), $vat_rate ) : $product_group_name;
 
 		$args = array(
 			'productGroupNumber' => $product_group_number,
@@ -337,7 +337,7 @@ class WCEFR_Products {
         
         }
 
-		$output = $this->wcefr_call->call( 'post', 'product-groups/', $args );
+		$output = $this->wcifr_call->call( 'post', 'product-groups/', $args );
 
 		return $output;
 
@@ -355,7 +355,7 @@ class WCEFR_Products {
 
 		$output = null;
         $product_group_number = 99 != $vat_rate ? ( intval( 100 + $vat_rate ) ) : $vat_rate;
-		$remote_product_group = $this->wcefr_call->call( 'get', 'product-groups/' . $product_group_number );
+		$remote_product_group = $this->wcifr_call->call( 'get', 'product-groups/' . $product_group_number );
 
 		if ( isset( $remote_product_group->productGroupNumber ) ) {
 
@@ -366,7 +366,7 @@ class WCEFR_Products {
             if ( 99 == $product_group_number ) {
 
                 $wc_tax        = null; 
-                $tax_rate_name = __( 'No VAT', 'wc-exporter-for-reviso' );
+                $tax_rate_name = __( 'No VAT', 'wc-importer-for-reviso' );
 
             } else {
 
@@ -550,11 +550,11 @@ class WCEFR_Products {
 
 					if ( $this->product_exists( $end ) ) {
 
-                        $output = $this->wcefr_call->call( 'put', 'products/' . $end, $args ); // temp.
+                        $output = $this->wcifr_call->call( 'put', 'products/' . $end, $args ); // temp.
 
 					} else {
 
-                        $output = $this->wcefr_call->call( 'post', 'products', $args );
+                        $output = $this->wcifr_call->call( 'post', 'products', $args );
                     
                     }
 
@@ -572,9 +572,9 @@ class WCEFR_Products {
 	 */
 	public function export_products() {
 
-		if ( isset( $_POST['wcefr-export-products-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcefr-export-products-nonce'] ), 'wcefr-export-products' ) ) {
+		if ( isset( $_POST['wcifr-export-products-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcifr-export-products-nonce'] ), 'wcifr-export-products' ) ) {
 
-			$class    = new WCEFR_Orders();
+			$class    = new WCIFR_Orders();
 			$terms    = isset( $_POST['terms'] ) ? $class->sanitize_array( $_POST['terms'] ) : '';
 			$response = array();
 
@@ -601,7 +601,7 @@ class WCEFR_Products {
 			}
 
 			/*Update the db*/
-			update_option( 'wcefr-products-categories', $terms );
+			update_option( 'wcifr-products-categories', $terms );
 
 			$response = array();
 
@@ -617,11 +617,11 @@ class WCEFR_Products {
 
 					/*Schedule single event*/
 					as_enqueue_async_action(
-						'wcefr_export_single_product_event',
+						'wcifr_export_single_product_event',
 						array(
 							'product_id' => $post->ID,
 						),
-						'wcefr_export_single_product'
+						'wcifr_export_single_product'
 					);
 
 				}
@@ -629,7 +629,7 @@ class WCEFR_Products {
 				$response[] = array(
 					'ok',
 					/* translators: the products count */
-					esc_html( sprintf( __( '%d product(s) export process has begun', 'wc-exporter-for-reviso' ), $n ) ),
+					esc_html( sprintf( __( '%d product(s) export process has begun', 'wc-importer-for-reviso' ), $n ) ),
 				);
 
 
@@ -637,7 +637,7 @@ class WCEFR_Products {
 
 				$response[] = array(
 					'error',
-					esc_html( __( 'ERROR! There are not products to export', 'wc-exporter-for-reviso' ) ),
+					esc_html( __( 'ERROR! There are not products to export', 'wc-importer-for-reviso' ) ),
 				);
 			
 			}
@@ -659,12 +659,12 @@ class WCEFR_Products {
 	public function delete_remote_single_product( $product_number ) {
 
 		$end    = $this->format_sku( $product_number );
-		$output = $this->wcefr_call->call( 'delete', 'products/' . $end );
+		$output = $this->wcifr_call->call( 'delete', 'products/' . $end );
 
 		/*Log the error*/
 		if ( ( isset( $output->errorCode ) || isset( $output->developerHint ) ) && isset( $output->message ) ) {
 
-			error_log( 'WCEFR ERROR | Reviso product ' . $product_number . ' | ' . $output->message );
+			error_log( 'WCIFR ERROR | Reviso product ' . $product_number . ' | ' . $output->message );
 
 		}
 
@@ -689,11 +689,11 @@ class WCEFR_Products {
 
 				/*Schedule single event*/
 				as_enqueue_async_action(
-					'wcefr_delete_remote_single_product_event',
+					'wcifr_delete_remote_single_product_event',
 					array(
 						'product_number' => $product->productNumber,
 					),
-					'wcefr_delete_remote_single_product'
+					'wcifr_delete_remote_single_product'
 				);
 
 			}
@@ -701,14 +701,14 @@ class WCEFR_Products {
 			$response[] = array(
 				'ok',
 				/* translators: the products count */
-				esc_html( sprintf( __( '%d product(s) delete process has begun', 'wc-exporter-for-reviso' ), $n ) ),
+				esc_html( sprintf( __( '%d product(s) delete process has begun', 'wc-importer-for-reviso' ), $n ) ),
 			);
 
 		} else {
 
 			$response[] = array(
 				'error',
-				esc_html( __( 'ERROR! There are not products to delete', 'wc-exporter-for-reviso' ) ),
+				esc_html( __( 'ERROR! There are not products to delete', 'wc-importer-for-reviso' ) ),
 			);
 
 		}
@@ -720,4 +720,4 @@ class WCEFR_Products {
 	}
 
 }
-new WCEFR_Products( true );
+new WCIFR_Products( true );

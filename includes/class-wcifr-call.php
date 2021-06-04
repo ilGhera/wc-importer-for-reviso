@@ -3,10 +3,10 @@
  * Handles the API calls
  *
  * @author ilGhera
- * @package wc-exporter-for-reviso/includes
- * @since 0.9.3
+ * @package wc-importer-for-reviso/includes
+ * @since 0.9.0
  */
-class WCEFR_Call {
+class WCIFR_Call {
 
 	/**
 	 * The base part for composing the endpoints
@@ -23,7 +23,7 @@ class WCEFR_Call {
 	 */
 	private function get_agreement_grant_token() {
 
-		$output = get_option( 'wcefr-agt' );
+		$output = get_option( 'wcifr-agt' );
 
 		return $output;
 
@@ -81,7 +81,7 @@ class WCEFR_Call {
 		} else {
 
 			/*Print the error to the log*/
-			error_log( 'WCEFR | WP ERROR: ' . print_r( $response, true ) );
+			error_log( 'WCIFR | WP ERROR: ' . print_r( $response, true ) );
 
 		}
 

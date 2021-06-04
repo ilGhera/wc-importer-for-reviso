@@ -3,10 +3,10 @@
  * Export customer and suppliers to Reviso
  *
  * @author ilGhera
- * @package wc-exporter-for-reviso/includes
- * @since 0.9.8
+ * @package wc-importer-for-reviso/includes
+ * @since 0.9.0
  */
-class WCEFR_Users {
+class WCIFR_Users {
 
 	/**
 	 * Class constructor
@@ -17,16 +17,16 @@ class WCEFR_Users {
 
 		if ( $init ) {
 
-			add_action( 'wp_ajax_wcefr-export-users', array( $this, 'export_users' ) );
-			add_action( 'wp_ajax_wcefr-delete-remote-users', array( $this, 'delete_remote_users' ) );
-			add_action( 'wp_ajax_wcefr-get-customers-groups', array( $this, 'get_customers_groups' ) );
-			add_action( 'wp_ajax_wcefr-get-suppliers-groups', array( $this, 'get_suppliers_groups' ) );
-			add_action( 'wcefr_export_single_user_event', array( $this, 'export_single_user' ), 10, 3 );
-			add_action( 'wcefr_delete_remote_single_user_event', array( $this, 'delete_remote_single_user' ), 10, 4 );
+			add_action( 'wp_ajax_wcifr-export-users', array( $this, 'export_users' ) );
+			add_action( 'wp_ajax_wcifr-delete-remote-users', array( $this, 'delete_remote_users' ) );
+			add_action( 'wp_ajax_wcifr-get-customers-groups', array( $this, 'get_customers_groups' ) );
+			add_action( 'wp_ajax_wcifr-get-suppliers-groups', array( $this, 'get_suppliers_groups' ) );
+			add_action( 'wcifr_export_single_user_event', array( $this, 'export_single_user' ), 10, 3 );
+			add_action( 'wcifr_delete_remote_single_user_event', array( $this, 'delete_remote_single_user' ), 10, 4 );
 
 		}
 
-		$this->wcefr_call = new WCEFR_Call();
+		$this->wcifr_call = new WCIFR_Call();
 
 	}
 
@@ -39,7 +39,7 @@ class WCEFR_Users {
 	 */
 	private function get_province_number( $code ) {
 
-		$provinces = $this->wcefr_call->call( 'get', 'provinces/IT?pagesize=1000' );
+		$provinces = $this->wcifr_call->call( 'get', 'provinces/IT?pagesize=1000' );
 
 		if ( isset( $provinces->collection ) ) {
 
@@ -64,7 +64,7 @@ class WCEFR_Users {
 	 */
 	private function get_delivery_locations( $customer_number ) {
 
-		$output = $this->wcefr_call->call( 'get', 'customers/' . $customer_number . '/delivery-locations' );
+		$output = $this->wcifr_call->call( 'get', 'customers/' . $customer_number . '/delivery-locations' );
 
 		return $output;
 
@@ -110,7 +110,7 @@ class WCEFR_Users {
 			);
 		}
 
-		$this->wcefr_call->call( 'post', 'customers/' . $customer_number . '/delivery-locations', $args );
+		$this->wcifr_call->call( 'post', 'customers/' . $customer_number . '/delivery-locations', $args );
 
 	}
 
@@ -124,7 +124,7 @@ class WCEFR_Users {
 	 */
 	private function get_remote_users( $type, $customer_number = null ) {
 
-		$output = $this->wcefr_call->call( 'get', $type . '/' . $customer_number );
+		$output = $this->wcifr_call->call( 'get', $type . '/' . $customer_number );
 
 		return $output;
 
@@ -142,7 +142,7 @@ class WCEFR_Users {
 
 		$field_name = 'customers' === $type ? 'customerNumber' : 'supplierNumber';
 
-		$output = $this->wcefr_call->call( 'get', $type . '?filter=email$eq:' . $email );
+		$output = $this->wcifr_call->call( 'get', $type . '?filter=email$eq:' . $email );
 
 		if ( ! $output ) {
 
@@ -174,7 +174,7 @@ class WCEFR_Users {
 		/*From plural to singular as required by the endpoint*/
 		$endpoint = substr( $type, 0, -1 );
 
-		$groups = $this->wcefr_call->call( 'get', $endpoint . '-groups' );
+		$groups = $this->wcifr_call->call( 'get', $endpoint . '-groups' );
 
 		$field_name = 'customers' === $type ? 'customerGroupNumber' : 'supplierGroupNumber';
 
@@ -251,10 +251,10 @@ class WCEFR_Users {
 			$postcode                = isset( $user_data['billing_postcode'] ) ? $user_data['billing_postcode'] : '';
 			$phone                   = isset( $user_data['billing_phone'] ) ? $user_data['billing_phone'] : '';
 			$website                 = $user_details->user_url;
-			$vat_number              = isset( $user_data['billing_wcefr_piva'] ) ? $user_data['billing_wcefr_piva'] : null;
-			$identification_number   = isset( $user_data['billing_wcefr_cf'] ) ? $user_data['billing_wcefr_cf'] : null;
-			$italian_certified_email = isset( $user_data['billing_wcefr_pec'] ) ? $user_data['billing_wcefr_pec'] : null;
-			$public_entry_number     = isset( $user_data['billing_wcefr_pa_code'] ) ? $user_data['billing_wcefr_pa_code'] : null;
+			$vat_number              = isset( $user_data['billing_wcifr_piva'] ) ? $user_data['billing_wcifr_piva'] : null;
+			$identification_number   = isset( $user_data['billing_wcifr_cf'] ) ? $user_data['billing_wcifr_cf'] : null;
+			$italian_certified_email = isset( $user_data['billing_wcifr_pec'] ) ? $user_data['billing_wcifr_pec'] : null;
+			$public_entry_number     = isset( $user_data['billing_wcifr_pa_code'] ) ? $user_data['billing_wcifr_pa_code'] : null;
 
 		} elseif ( $order ) {
 
@@ -266,10 +266,10 @@ class WCEFR_Users {
 			$address                 = $order->get_billing_address_1();
 			$postcode                = $order->get_billing_postcode();
 			$phone                   = $order->get_billing_phone();
-			$vat_number              = $order->get_meta( '_billing_wcefr_piva' ) ? $order->get_meta( '_billing_wcefr_piva' ) : null;
-			$identification_number   = $order->get_meta( '_billing_wcefr_cf' ) ? $order->get_meta( '_billing_wcefr_cf' ) : null;
-			$italian_certified_email = $order->get_meta( '_billing_wcefr_pec' ) ? $order->get_meta( '_billing_wcefr_pec' ) : null;
-			$public_entry_number     = $order->get_meta( '_billing_wcefr_pa_code' ) ? $order->get_meta( '_billing_wcefr_pa_code' ) : null;
+			$vat_number              = $order->get_meta( '_billing_wcifr_piva' ) ? $order->get_meta( '_billing_wcifr_piva' ) : null;
+			$identification_number   = $order->get_meta( '_billing_wcifr_cf' ) ? $order->get_meta( '_billing_wcifr_cf' ) : null;
+			$italian_certified_email = $order->get_meta( '_billing_wcifr_pec' ) ? $order->get_meta( '_billing_wcifr_pec' ) : null;
+			$public_entry_number     = $order->get_meta( '_billing_wcifr_pa_code' ) ? $order->get_meta( '_billing_wcifr_pa_code' ) : null;
 
 		} else {
 
@@ -286,7 +286,7 @@ class WCEFR_Users {
 		/*Reviso's group selected by the admin*/
 		if ( $order ) {
 	
-            $get_customers_groups = get_option( 'wcefr-orders-customers-group' );
+            $get_customers_groups = get_option( 'wcifr-orders-customers-group' );
 
             if ( 0 === intval( $get_customers_groups ) ) {
 
@@ -302,7 +302,7 @@ class WCEFR_Users {
 
 		} else {
 
-			$group = get_option( 'wcefr-' . $type . '-group' );
+			$group = get_option( 'wcifr-' . $type . '-group' );
 
 		}
 
@@ -380,18 +380,18 @@ class WCEFR_Users {
 
 			if ( ! $remote_id ) {
 
-				$output = $this->wcefr_call->call( 'post', $type . '/', $args );
+				$output = $this->wcifr_call->call( 'post', $type . '/', $args );
 
 			} else {
 
-				$output = $this->wcefr_call->call( 'put', $type . '/' . $remote_id, $args );
+				$output = $this->wcifr_call->call( 'put', $type . '/' . $remote_id, $args );
 
 			}
 
 			/*Log the error*/
 			if ( ( isset( $output->errorCode ) || isset( $output->developerHint ) ) && isset( $output->message ) ) {
 
-				error_log( 'WCEFR ERROR | User ID ' . $user_id . ' | ' . $output->message );
+				error_log( 'WCIFR ERROR | User ID ' . $user_id . ' | ' . $output->message );
 
 			} else {
 
@@ -411,15 +411,15 @@ class WCEFR_Users {
 	 */
 	public function export_users() {
 
-		if ( isset( $_POST['wcefr-export-users-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcefr-export-users-nonce'] ), 'wcefr-export-users' ) ) {
+		if ( isset( $_POST['wcifr-export-users-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcifr-export-users-nonce'] ), 'wcifr-export-users' ) ) {
 
 			$type  = isset( $_POST['type'] ) ? sanitize_text_field( wp_unslash( $_POST['type'] ) ) : '';
 			$role  = isset( $_POST['role'] ) ? sanitize_text_field( wp_unslash( $_POST['role'] ) ) : '';
 			$group = isset( $_POST['group'] ) ? sanitize_text_field( wp_unslash( $_POST['group'] ) ) : '';
 
 			/*Salvo le impostazioni nel database*/
-			update_option( 'wcefr-' . $type . '-role', $role );
-			update_option( 'wcefr-' . $type . '-group', $group );
+			update_option( 'wcifr-' . $type . '-role', $role );
+			update_option( 'wcifr-' . $type . '-group', $group );
 
 			$args     = array( 'role' => $role );
 			$users    = get_users( $args );
@@ -435,12 +435,12 @@ class WCEFR_Users {
 
 					/*Schedule single event*/
 					as_enqueue_async_action(
-						'wcefr_export_single_user_event',
+						'wcifr_export_single_user_event',
 						array(
 							'user_id'   => $user->ID,
 							'user_type' => $type,
 						),
-						'wcefr_export_single_user'
+						'wcifr_export_single_user'
 					);
 
 				}
@@ -451,7 +451,7 @@ class WCEFR_Users {
 			$response[] = array(
 				'ok',
 				/* translators: 1: users count 2: user type */
-				esc_html( sprintf( __( '%1$d %2$s(s) export process has begun', 'wc-exporter-for-reviso' ), $n, $message_type ) ),
+				esc_html( sprintf( __( '%1$d %2$s(s) export process has begun', 'wc-importer-for-reviso' ), $n, $message_type ) ),
 			);
 
 			echo json_encode( $response );
@@ -470,12 +470,12 @@ class WCEFR_Users {
 	 */
 	public function delete_remote_single_user( $user_number, $type ) {
 
-		$output = $this->wcefr_call->call( 'delete', $type . '/' . $user_number );
+		$output = $this->wcifr_call->call( 'delete', $type . '/' . $user_number );
 
 		/*Log the error*/
 		if ( ( isset( $output->errorCode ) || isset( $output->developerHint ) ) && isset( $output->message ) ) {
 
-			error_log( 'WCEFR ERROR | Reviso user ' . $user_number . ' | ' . $output->message );
+			error_log( 'WCIFR ERROR | Reviso user ' . $user_number . ' | ' . $output->message );
 
 		}
 
@@ -487,7 +487,7 @@ class WCEFR_Users {
 	 */
 	public function delete_remote_users() {
 
-		if ( isset( $_POST['type'], $_POST['wcefr-delete-users-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcefr-delete-users-nonce'] ), 'wcefr-delete-users' ) ) {
+		if ( isset( $_POST['type'], $_POST['wcifr-delete-users-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcifr-delete-users-nonce'] ), 'wcifr-delete-users' ) ) {
 
 			$response = array();
 			$type = sanitize_text_field( wp_unslash( $_POST['type'] ) );
@@ -505,12 +505,12 @@ class WCEFR_Users {
 
 					/*Cron event*/
 					as_enqueue_async_action(
-						'wcefr_delete_remote_single_user_event',
+						'wcifr_delete_remote_single_user_event',
 						array(
 							'remote_user' => $user->$field_name,
 							'user_type'   => $type,
 						),
-						'wcefr_delete_remote_single_user'
+						'wcifr_delete_remote_single_user'
 					);
 
 				}
@@ -519,7 +519,7 @@ class WCEFR_Users {
 				$response[] = array(
 					'ok',
 					/* translators: 1: users count 2: user type */
-					esc_html( sprintf( __( '%1$d %2$s(s) delete process has begun', 'wc-exporter-for-reviso' ), $n, $message_type ) ),
+					esc_html( sprintf( __( '%1$d %2$s(s) delete process has begun', 'wc-importer-for-reviso' ), $n, $message_type ) ),
 				);
 
 				echo json_encode( $response );
@@ -529,7 +529,7 @@ class WCEFR_Users {
 				$response[] = array(
 					'error',
 					/* translators: user type */
-					esc_html( sprintf( __( 'ERROR! There are not %s to delete', 'wc-exporter-for-reviso' ), $type ) ),
+					esc_html( sprintf( __( 'ERROR! There are not %s to delete', 'wc-importer-for-reviso' ), $type ) ),
 				);
 
 				echo json_encode( $response );
@@ -542,4 +542,4 @@ class WCEFR_Users {
 
 	}
 }
-new WCEFR_Users( true );
+new WCIFR_Users( true );

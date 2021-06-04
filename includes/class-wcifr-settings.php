@@ -3,10 +3,10 @@
  * General settings
  *
  * @author ilGhera
- * @package wc-exporter-for-reviso/includes
- * @since 0.9.8
+ * @package wc-importer-for-reviso/includes
+ * @since 0.9.0
  */
-class WCEFR_Settings {
+class WCIFR_Settings {
 
 	/**
 	 * Class constructor
@@ -18,13 +18,13 @@ class WCEFR_Settings {
 		if ( $init ) {
 
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
-			add_action( 'wp_ajax_wcefr-check-connection', array( $this, 'check_connection_callback' ) );
-			add_action( 'wp_ajax_wcefr-disconnect', array( $this, 'disconnect_callback' ) );
+			add_action( 'wp_ajax_wcifr-check-connection', array( $this, 'check_connection_callback' ) );
+			add_action( 'wp_ajax_wcifr-disconnect', array( $this, 'disconnect_callback' ) );
 			add_action( 'admin_footer', array( $this, 'save_agt' ) );
 
 		}
 
-		$this->wcefr_call = new WCEFR_Call();
+		$this->wcifr_call = new WCIFR_Call();
 
 	}
 
@@ -37,13 +37,13 @@ class WCEFR_Settings {
 
 		$screen = get_current_screen();
 
-		if ( 'woocommerce_page_wc-exporter-for-reviso' === $screen->id ) {
-            wp_enqueue_script( 'chosen', WCEFR_URI . '/vendor/harvesthq/chosen/chosen.jquery.min.js' );
-            wp_enqueue_script( 'tzcheckbox', WCEFR_URI . 'js/tzCheckbox/jquery.tzCheckbox/jquery.tzCheckbox.js', array( 'jquery' ) );
+		if ( 'woocommerce_page_wc-importer-for-reviso' === $screen->id ) {
+            wp_enqueue_script( 'chosen', WCIFR_URI . '/vendor/harvesthq/chosen/chosen.jquery.min.js' );
+            wp_enqueue_script( 'tzcheckbox', WCIFR_URI . 'js/tzCheckbox/jquery.tzCheckbox/jquery.tzCheckbox.js', array( 'jquery' ) );
 
-            wp_enqueue_style( 'chosen-style', WCEFR_URI . '/vendor/harvesthq/chosen/chosen.min.css' );
+            wp_enqueue_style( 'chosen-style', WCIFR_URI . '/vendor/harvesthq/chosen/chosen.min.css' );
             wp_enqueue_style( 'font-awesome', '//use.fontawesome.com/releases/v5.8.1/css/all.css' );
-            wp_enqueue_style( 'tzcheckbox-style', WCEFR_URI . 'js/tzCheckbox/jquery.tzCheckbox/jquery.tzCheckbox.css' );
+            wp_enqueue_style( 'tzcheckbox-style', WCIFR_URI . 'js/tzCheckbox/jquery.tzCheckbox/jquery.tzCheckbox.css' );
         }
 
 	}
@@ -54,11 +54,11 @@ class WCEFR_Settings {
 	 *
 	 * @return boolean
 	 */
-	public function is_wcefr_admin() {
+	public function is_wcifr_admin() {
 
 		$screen = get_current_screen();
 
-		if ( isset( $screen->id ) && 'woocommerce_page_wc-exporter-for-reviso' === $screen->id ) {
+		if ( isset( $screen->id ) && 'woocommerce_page_wc-importer-for-reviso' === $screen->id ) {
 			return true;
 		}
 
@@ -72,10 +72,10 @@ class WCEFR_Settings {
 	 */
 	public function save_agt() {
 
-		if ( $this->is_wcefr_admin() && isset( $_GET['token'] ) ) {
+		if ( $this->is_wcifr_admin() && isset( $_GET['token'] ) ) {
 			$token = sanitize_text_field( wp_unslash( $_GET['token'] ) );
 
-			update_option( 'wcefr-agt', $token );
+			update_option( 'wcifr-agt', $token );
 		}
 
 	}
@@ -88,7 +88,7 @@ class WCEFR_Settings {
 	 */
 	public function disconnect_callback() {
 
-		delete_option( 'wcefr-agt' );
+		delete_option( 'wcifr-agt' );
 
 		exit;
 
@@ -103,7 +103,7 @@ class WCEFR_Settings {
 	 */
 	public function check_connection_callback( $return = false ) {
 
-		$response = $this->wcefr_call->call( 'get', 'self' );
+		$response = $this->wcifr_call->call( 'get', 'self' );
         
 		if ( isset( $response->httpStatusCode ) && isset( $response->message ) ) {
 
@@ -117,7 +117,7 @@ class WCEFR_Settings {
 
 			} else {
 
-				echo '<h4 class="wcefr-connection-status"><span class="label label-success">' . esc_html( __( 'Connected', 'wc-exporter-for-reviso' ) ) . '</span></h4>';
+				echo '<h4 class="wcifr-connection-status"><span class="label label-success">' . esc_html( __( 'Connected', 'wc-importer-for-reviso' ) ) . '</span></h4>';
 
 			}
 
@@ -128,4 +128,4 @@ class WCEFR_Settings {
 	}
 
 }
-new WCEFR_Settings( true );
+new WCIFR_Settings( true );

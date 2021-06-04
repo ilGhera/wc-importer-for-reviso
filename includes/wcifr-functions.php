@@ -3,8 +3,8 @@
  * Functions
  *
  * @author ilGhera
- * @package wc-exporter-for-reviso/includes
- * @since 0.9.4
+ * @package wc-importer-for-reviso/includes
+ * @since 0.9.0
  */
 
 /**
@@ -42,12 +42,12 @@ function avoid_length_exceed( $text, $limit ) {
 /**
  * Update checker
  */
-require( WCEFR_DIR . 'plugin-update-checker/plugin-update-checker.php' );
+require( WCIFR_DIR . 'plugin-update-checker/plugin-update-checker.php' );
 
-$wcefr_update_checker = Puc_v4_Factory::buildUpdateChecker(
-	'https://www.ilghera.com/wp-update-server-2/?action=get_metadata&slug=wc-exporter-for-reviso-premium',
-	WCEFR_FILE,
-	'wc-exporter-for-reviso-premium'
+$wcifr_update_checker = Puc_v4_Factory::buildUpdateChecker(
+	'https://www.ilghera.com/wp-update-server-2/?action=get_metadata&slug=wc-importer-for-reviso-premium',
+	WCIFR_FILE,
+	'wc-importer-for-reviso-premium'
 );
 
 
@@ -57,9 +57,9 @@ $wcefr_update_checker = Puc_v4_Factory::buildUpdateChecker(
  * @param  array $query_args the default args.
  * @return array            the updated args
  */
-function wcefr_secure_update_check( $query_args ) {
+function wcifr_secure_update_check( $query_args ) {
 
-	$key = base64_encode( get_option( 'wcefr-premium-key' ) );
+	$key = base64_encode( get_option( 'wcifr-premium-key' ) );
 
 	if ( $key ) {
 
@@ -70,7 +70,7 @@ function wcefr_secure_update_check( $query_args ) {
 	return $query_args;
 
 }
-$wcefr_update_checker->addQueryArgFilter( 'wcefr_secure_update_check' );
+$wcifr_update_checker->addQueryArgFilter( 'wcifr_secure_update_check' );
 
 
 /**
@@ -79,15 +79,15 @@ $wcefr_update_checker->addQueryArgFilter( 'wcefr_secure_update_check' );
  * @param  array $plugin_data plugin information.
  * @param  array $response    available plugin update information.
  */
-function wcefr_update_message( $plugin_data, $response ) {
+function wcifr_update_message( $plugin_data, $response ) {
 
-	$key = get_option( 'wcefr-premium-key' );
+	$key = get_option( 'wcifr-premium-key' );
 
 	$message = null;
 
 	if ( ! $key ) {
 
-		$message = 'A <b>Premium Key</b> is required for keeping this plugin up to date. Please, add yours in the <a href="' . WCEFR_SETTINGS . '">options page</a> or click <a href="https://www.ilghera.com/product/wc-exporter-for-reviso-premium/" target="_blank">here</a> for prices and details.';
+		$message = 'A <b>Premium Key</b> is required for keeping this plugin up to date. Please, add yours in the <a href="' . WCIFR_SETTINGS . '">options page</a> or click <a href="https://www.ilghera.com/product/wc-importer-for-reviso-premium/" target="_blank">here</a> for prices and details.';
 
 	} else {
 
@@ -98,11 +98,11 @@ function wcefr_update_message( $plugin_data, $response ) {
 
 		if ( $limit < $now ) {
 
-			$message = 'It seems like your <strong>Premium Key</strong> is expired. Please, click <a href="https://www.ilghera.com/product/wc-exporter-for-reviso-premium/" target="_blank">here</a> for prices and details.';
+			$message = 'It seems like your <strong>Premium Key</strong> is expired. Please, click <a href="https://www.ilghera.com/product/wc-importer-for-reviso-premium/" target="_blank">here</a> for prices and details.';
 
 		} elseif ( '7082' !== $decoded_key[2] ) {
 
-			$message = 'It seems like your <strong>Premium Key</strong> is not valid. Please, click <a href="https://www.ilghera.com/product/wc-exporter-for-reviso-premium/" target="_blank">here</a> for prices and details.';
+			$message = 'It seems like your <strong>Premium Key</strong> is not valid. Please, click <a href="https://www.ilghera.com/product/wc-importer-for-reviso-premium/" target="_blank">here</a> for prices and details.';
 
 		}
 
@@ -116,7 +116,7 @@ function wcefr_update_message( $plugin_data, $response ) {
 		),
 	);
 
-	echo ( $message ) ? '<br><span class="wcefr-alert">' . wp_kses( $message, $allowed_tags ) . '</span>' : '';
+	echo ( $message ) ? '<br><span class="wcifr-alert">' . wp_kses( $message, $allowed_tags ) . '</span>' : '';
 
 }
-add_action( 'in_plugin_update_message-' . WCEFR_DIR_NAME . '/wc-exporter-for-reviso.php', 'wcefr_update_message', 10, 2 );
+add_action( 'in_plugin_update_message-' . WCIFR_DIR_NAME . '/wc-importer-for-reviso.php', 'wcifr_update_message', 10, 2 );
