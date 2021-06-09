@@ -65,7 +65,7 @@ class WCIFR_Call {
 		$response = wp_remote_request(
 			$this->base_url . $endpoint,
 			array(
-				'method' => $method,
+				'method'  => $method,
 				'headers' => $this->headers(),
 				'timeout' => 20,
 				'body'    => $body,

@@ -13,12 +13,12 @@ var wcifrController = function() {
 	self.onLoad = function() {
 	    self.wcifr_pagination();
 		self.tzCheckbox();
-	    self.wcifr_export_users();
+	    self.wcifr_import_users();
 	    self.wcifr_delete_remote_users();
-		self.get_user_groups('customers');
+		// self.get_user_groups('customers');
 		self.get_user_groups('suppliers');
-		self.wcifr_export_products();
-		self.wcifr_export_orders();
+		self.wcifr_import_products();
+		self.wcifr_import_orders();
 		self.wcifr_delete_remote_products();
 		self.wcifr_delete_remote_orders();
 		self.wcifr_disconnect();
@@ -267,11 +267,11 @@ var wcifrController = function() {
 	/**
 	 * Export WP users to Reviso
 	 */
-	self.wcifr_export_users = function() {
+	self.wcifr_import_users = function() {
 
 		jQuery(function($){
 
-			$('.button-primary.wcifr.export-users').on('click', function(e){
+			$('.button-primary.wcifr.import-users').on('click', function(e){
 
 				e.preventDefault();
 
@@ -279,16 +279,16 @@ var wcifrController = function() {
 				self.wcifr_response_loading();
 				self.wcifr_response_scroll();
 
-				var type  = $(this).hasClass('customers') ? 'customers' : 'suppliers';
-				var role  = $('.wcifr-' + type + '-role').val();
-				var group = $('.wcifr-' + type + '-groups').val();
+				var type   = $(this).hasClass('customers') ? 'customers' : 'suppliers';
+				var role   = $('.wcifr-' + type + '-role').val();
+				var groups = $('.wcifr-' + type + '-groups').val();
 
 				var data = {
-					'action': 'wcifr-export-users',
-					'wcifr-export-users-nonce': wcifrUsers.exportNonce,
+					'action': 'wcifr-import-users',
+					'wcifr-import-users-nonce': wcifrUsers.importNonce,
 					'type': type,
 					'role': role,
-					'group': group
+					'groups': groups
 				}
 
 				$.post(ajaxurl, data, function(response){
@@ -376,11 +376,11 @@ var wcifrController = function() {
 	/**
 	 * Export products to Reviso
 	 */
-	self.wcifr_export_products = function() {
+	self.wcifr_import_products = function() {
 
 		jQuery(function($){
 
-			$('.button-primary.wcifr.export.products').on('click', function(e){
+			$('.button-primary.wcifr.import.products').on('click', function(e){
 
 				e.preventDefault();
 
@@ -391,8 +391,8 @@ var wcifrController = function() {
 				var terms = $('.wcifr-products-categories').val();
 
 				var data = {
-					'action': 'wcifr-export-products',
-					'wcifr-export-products-nonce': wcifrProducts.exportNonce,
+					'action': 'wcifr-import-products',
+					'wcifr-import-products-nonce': wcifrProducts.importNonce,
 					'terms': terms
 				}
 
@@ -505,13 +505,13 @@ var wcifrController = function() {
 
                         isTabOrders    = $(this).hasClass('wcifr-orders-customers-group') ? true : false;
                         selectClass    = isTabOrders ? 'wcifr-select-large' : 'wcifr-select';
-                        optionSelected = $(this).attr('data-group-selected');
+                        optionSelected = JSON.parse( wcifrUsers.selectedSuppliersGroups ); 
 
                         if (typeof groups === 'object') {
 
-                            for (key in groups) {
+                            for (key in groups) {        
 
-                                selected = key == optionSelected ? ' selected="selected"' : false;
+                                selected = optionSelected.indexOf(key) > -1 ? ' selected="selected"' : false;
                                 $(this).append('<option value="' + key + '"' + selected + '>' + groups[key] + '</option>');
 
                             }
@@ -539,11 +539,11 @@ var wcifrController = function() {
 	/**
 	 * Export orders to Reviso
 	 */
-	self.wcifr_export_orders = function() {
+	self.wcifr_import_orders = function() {
 
 		jQuery(function($){
 
-			$('.button-primary.wcifr.export.orders').on('click', function(e){
+			$('.button-primary.wcifr.import.orders').on('click', function(e){
 
 				e.preventDefault();
 
@@ -554,8 +554,8 @@ var wcifrController = function() {
 				var statuses = $('.wcifr-orders-statuses').val();
 
 				var data = {
-					'action': 'wcifr-export-orders',
-					'wcifr-export-orders-nonce': wcifrOrders.exportNonce,
+					'action': 'wcifr-import-orders',
+					'wcifr-import-orders-nonce': wcifrOrders.importNonce,
 					'statuses': statuses
 				}
 

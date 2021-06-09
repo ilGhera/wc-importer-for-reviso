@@ -10,7 +10,7 @@
 ?>
 
 <!-- Export form -->
-<form name="wcifr-export-suppliers" class="wcifr-form"  method="post" action="">
+<form name="wcifr-import-suppliers" class="wcifr-form"  method="post" action="">
 
 	<table class="form-table">
 		<tr>
@@ -34,7 +34,7 @@
 			</td>
 		</tr>
 		<tr>
-			<th scope="row"><?php esc_html_e( 'Group', 'wc-importer-for-reviso' ); ?></th>
+			<th scope="row"><?php esc_html_e( 'Groups', 'wc-importer-for-reviso' ); ?></th>
 			<td>
 				<select class="wcifr-suppliers-groups" name="wcifr-suppliers-groups" multiple="multiple"></select>
 				<p class="description"><?php esc_html_e( 'Select one or more Reviso suppliers groups to import', 'wc-importer-for-reviso' ); ?></p>
@@ -50,13 +50,14 @@
 
 <?php
 /*Nonce*/
-$export_users_nonce = wp_create_nonce( 'wcifr-export-users' );
+$import_users_nonce = wp_create_nonce( 'wcifr-import-users' );
 
 wp_localize_script(
 	'wcifr-js',
 	'wcifrUsers',
 	array(
-		'exportNonce' => $export_users_nonce,
+        'importNonce'             => $import_users_nonce,
+        'selectedSuppliersGroups' => json_encode( get_option( 'wcifr-suppliers-groups' ) ),
 	)
 );
 

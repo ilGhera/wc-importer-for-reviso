@@ -17,146 +17,15 @@ class WCIFR_Users {
 
 		if ( $init ) {
 
-			add_action( 'wp_ajax_wcifr-export-users', array( $this, 'export_users' ) );
-			add_action( 'wp_ajax_wcifr-delete-remote-users', array( $this, 'delete_remote_users' ) );
+			/* add_action( 'wp_ajax_wcifr-import-users', array( $this, 'import_users' ) ); */
+			add_action( 'wp_ajax_wcifr-import-users', array( $this, 'get_remote_users' ) );
 			add_action( 'wp_ajax_wcifr-get-customers-groups', array( $this, 'get_customers_groups' ) );
 			add_action( 'wp_ajax_wcifr-get-suppliers-groups', array( $this, 'get_suppliers_groups' ) );
-			add_action( 'wcifr_export_single_user_event', array( $this, 'export_single_user' ), 10, 3 );
-			add_action( 'wcifr_delete_remote_single_user_event', array( $this, 'delete_remote_single_user' ), 10, 4 );
+			add_action( 'wcifr_import_single_user_event', array( $this, 'import_single_user' ), 10, 3 );
 
 		}
 
 		$this->wcifr_call = new WCIFR_Call();
-
-	}
-
-
-	/**
-	 * Return the provinceNumer, required by Reviso for adding the province
-	 *
-	 * @param  string $code the two letters province code coming from WC.
-	 * @return int
-	 */
-	private function get_province_number( $code ) {
-
-		$provinces = $this->wcifr_call->call( 'get', 'provinces/IT?pagesize=1000' );
-
-		if ( isset( $provinces->collection ) ) {
-
-			foreach ( $provinces->collection as $prov ) {
-
-				if ( isset( $prov->code ) && $code == $prov->code ) {
-
-					return $prov->provinceNumber;
-
-				}
-			}
-		}
-
-	}
-
-
-	/**
-	 * Get the delivery locations of a specific user in Reviso
-	 *
-	 * @param  int $customer_number the customer number in Reviso.
-	 * @return array
-	 */
-	private function get_delivery_locations( $customer_number ) {
-
-		$output = $this->wcifr_call->call( 'get', 'customers/' . $customer_number . '/delivery-locations' );
-
-		return $output;
-
-	}
-
-
-	/**
-	 * Add a delivery location to the specified user
-	 *
-	 * @param int   $customer_number the customer number in Reviso.
-	 * @param array $userdata        wp user data.
-	 * @return void
-	 */
-	private function add_delivery_location( $customer_number, $userdata ) {
-
-		$delivery_locations = $this->get_delivery_locations( $customer_number );
-
-		$count = 0;
-		if ( isset( $delivery_locations->collection ) && is_array( $delivery_locations->collection ) ) {
-			$count = count( $delivery_locations->collection );
-		}
-
-		if ( isset( $userdata->shipping_address_1 ) ) {
-
-			$args = array(
-				'address'                => $userdata['shipping_address_1'],
-				'city'                   => $userdata['shipping_city'],
-				'country'                => $userdata['shipping_country'],
-				'postalCode'             => $userdata['shipping_postcode'],
-				'barred'                 => null,
-				'deliveryLocationNumber' => $count + 1,
-			);
-
-		} else {
-
-			$args = array(
-				'address'                => $userdata['billing_address_1'],
-				'city'                   => $userdata['billing_city'],
-				'country'                => $userdata['billing_country'],
-				'postalCode'             => $userdata['billing_postcode'],
-				'barred'                 => null,
-				'deliveryLocationNumber' => $count + 1,
-			);
-		}
-
-		$this->wcifr_call->call( 'post', 'customers/' . $customer_number . '/delivery-locations', $args );
-
-	}
-
-
-	/**
-	 * Get customers and suppliers from Reviso
-	 *
-	 * @param string $type the type of user.
-	 * @param int    $customer_number the specific customer to get.
-	 * @return array
-	 */
-	private function get_remote_users( $type, $customer_number = null ) {
-
-		$output = $this->wcifr_call->call( 'get', $type . '/' . $customer_number );
-
-		return $output;
-
-	}
-
-
-	/**
-	 * Check if a customer/ supplier exists in Reviso
-	 *
-	 * @param  string $type the type of user.
-	 * @param  string $email the user email.
-	 * @return bool
-	 */
-	private function user_exists( $type, $email ) {
-
-		$field_name = 'customers' === $type ? 'customerNumber' : 'supplierNumber';
-
-		$output = $this->wcifr_call->call( 'get', $type . '?filter=email$eq:' . $email );
-
-		if ( ! $output ) {
-
-			return false;
-
-		} else {
-
-			if ( isset( $output->collection[0]->$field_name ) ) {
-
-				return $output->collection[0]->$field_name;
-
-			}
-
-		}
 
 	}
 
@@ -220,7 +89,61 @@ class WCIFR_Users {
 
 
 	/**
-	 * Prepare the single user data to export to Reviso
+	 * Get customers and suppliers from Reviso
+	 *
+	 * @param string $type the type of user.
+	 * @param int    $customer_number the specific customer to get.
+	 * @return array
+	 */
+	public function get_remote_users() {
+
+		if ( isset( $_POST['wcifr-import-users-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcifr-import-users-nonce'] ), 'wcifr-import-users' ) ) {
+
+			$type   = isset( $_POST['type'] ) ? sanitize_text_field( wp_unslash( $_POST['type'] ) ) : '';
+			$role   = isset( $_POST['role'] ) ? sanitize_text_field( wp_unslash( $_POST['role'] ) ) : '';
+			$groups = isset( $_POST['groups'] ) && is_array( $_POST['groups'] ) ? wcifr_sanitize_array( $_POST['groups'] ) : '';
+
+            /* error_log( 'POST: ' . print_r( $_POST, true ) ); */
+            error_log( 'GROUPS: ' . print_r( $groups, true ) );
+
+			/*Salvo le impostazioni nel database*/
+			update_option( 'wcifr-' . $type . '-role', $role );
+			update_option( 'wcifr-' . $type . '-groups', $groups );
+
+            $filter  = $groups ? '?filter=supplierGroup$in:[' . implode( ',', $groups ) . ']' : null;
+
+            error_log( 'FILTER: ' . $filter );
+
+            $results = $this->wcifr_call->call( 'get', $type, $filter );
+
+            if ( isset( $results->collection ) ) {
+
+                $count = count( $results->collection );
+
+                error_log( 'SUPPLIERS: ' . print_r( $results->collection, true) );
+
+                /* return $results->collection; */
+
+                $message_type = substr( $type, 0, -1 );
+                $response[] = array(
+                    'ok',
+                    /* translators: 1: users count 2: user type */
+                    esc_html( sprintf( __( '%1$d %2$s(s) import process has begun', 'wc-importer-for-reviso' ), $count, $message_type ) ),
+                );
+
+                echo json_encode( $response );
+
+            }
+
+        }
+
+        exit;
+
+	}
+
+
+	/**
+	 * Prepare the single user data to import to Reviso
 	 *
 	 * @param  int    $user_id the WP user id.
 	 * @param  string $type  customers or suppliers.
@@ -371,7 +294,7 @@ class WCIFR_Users {
 	 * @param  object $order   the WC order to get the customer details.
 	 * @return void
 	 */
-	public function export_single_user( $user_id, $type, $order = null ) {
+	public function import_single_user( $user_id, $type, $order = null ) {
 
 		$args      = $this->prepare_user_data( $user_id, $type, $order );
 		$remote_id = $this->user_exists( $type, $args['email'] );
@@ -409,9 +332,9 @@ class WCIFR_Users {
 	 *
 	 * @return void
 	 */
-	public function export_users() {
+	public function import_users() {
 
-		if ( isset( $_POST['wcifr-export-users-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcifr-export-users-nonce'] ), 'wcifr-export-users' ) ) {
+		if ( isset( $_POST['wcifr-import-users-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcifr-import-users-nonce'] ), 'wcifr-import-users' ) ) {
 
 			$type  = isset( $_POST['type'] ) ? sanitize_text_field( wp_unslash( $_POST['type'] ) ) : '';
 			$role  = isset( $_POST['role'] ) ? sanitize_text_field( wp_unslash( $_POST['role'] ) ) : '';
@@ -435,12 +358,12 @@ class WCIFR_Users {
 
 					/*Schedule single event*/
 					as_enqueue_async_action(
-						'wcifr_export_single_user_event',
+						'wcifr_import_single_user_event',
 						array(
 							'user_id'   => $user->ID,
 							'user_type' => $type,
 						),
-						'wcifr_export_single_user'
+						'wcifr_import_single_user'
 					);
 
 				}
@@ -451,7 +374,7 @@ class WCIFR_Users {
 			$response[] = array(
 				'ok',
 				/* translators: 1: users count 2: user type */
-				esc_html( sprintf( __( '%1$d %2$s(s) export process has begun', 'wc-importer-for-reviso' ), $n, $message_type ) ),
+				esc_html( sprintf( __( '%1$d %2$s(s) import process has begun', 'wc-importer-for-reviso' ), $n, $message_type ) ),
 			);
 
 			echo json_encode( $response );
@@ -462,84 +385,6 @@ class WCIFR_Users {
 	}
 
 
-	/**
-	 * Delete a single customer/ supplier in Reviso
-	 *
-	 * @param  int    $user_number the user number in Reviso.
-	 * @param  string $type        customer or supplier.
-	 */
-	public function delete_remote_single_user( $user_number, $type ) {
-
-		$output = $this->wcifr_call->call( 'delete', $type . '/' . $user_number );
-
-		/*Log the error*/
-		if ( ( isset( $output->errorCode ) || isset( $output->developerHint ) ) && isset( $output->message ) ) {
-
-			error_log( 'WCIFR ERROR | Reviso user ' . $user_number . ' | ' . $output->message );
-
-		}
-
-	}
-
-
-	/**
-	 * Delete all customers/ suppliers in Reviso
-	 */
-	public function delete_remote_users() {
-
-		if ( isset( $_POST['type'], $_POST['wcifr-delete-users-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcifr-delete-users-nonce'] ), 'wcifr-delete-users' ) ) {
-
-			$response = array();
-			$type = sanitize_text_field( wp_unslash( $_POST['type'] ) );
-			$users = $this->get_remote_users( $type );
-
-			$field_name = 'customers' === $type ? 'customerNumber' : 'supplierNumber';
-
-			if ( isset( $users->collection ) && count( $users->collection ) > 0 ) {
-
-				$n = 0;
-
-				foreach ( $users->collection as $user ) {
-
-					$n++;
-
-					/*Cron event*/
-					as_enqueue_async_action(
-						'wcifr_delete_remote_single_user_event',
-						array(
-							'remote_user' => $user->$field_name,
-							'user_type'   => $type,
-						),
-						'wcifr_delete_remote_single_user'
-					);
-
-				}
-
-				$message_type = substr( $type, 0, -1 );
-				$response[] = array(
-					'ok',
-					/* translators: 1: users count 2: user type */
-					esc_html( sprintf( __( '%1$d %2$s(s) delete process has begun', 'wc-importer-for-reviso' ), $n, $message_type ) ),
-				);
-
-				echo json_encode( $response );
-
-			} else {
-
-				$response[] = array(
-					'error',
-					/* translators: user type */
-					esc_html( sprintf( __( 'ERROR! There are not %s to delete', 'wc-importer-for-reviso' ), $type ) ),
-				);
-
-				echo json_encode( $response );
-
-			}
-
-		}
-
-		exit;
-
-	}
 }
 new WCIFR_Users( true );
+

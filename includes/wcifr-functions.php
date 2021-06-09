@@ -14,7 +14,7 @@
  * @param  int    $limit the string length limit.
  * @return string
  */
-function avoid_length_exceed( $text, $limit ) {
+function wcifr_avoid_length_exceed( $text, $limit ) {
 
     $output = $text;
 
@@ -29,6 +29,31 @@ function avoid_length_exceed( $text, $limit ) {
 
             /*Product name and description*/
             $output = substr( $text, 0, ( $limit - 4 ) ) . ' ...';
+
+        }
+
+    }
+
+    return $output;
+
+}
+
+
+/**
+ * Sanitize every single array element
+ *
+ * @param  array $array the array to sanitize.
+ * @return array        the sanitized array.
+ */
+function wcifr_sanitize_array( $array ) {
+
+    $output = array();
+
+    if ( is_array( $array ) && ! empty( $array ) ) {
+
+        foreach ( $array as $key => $value ) {
+
+            $output[ $key ] = sanitize_text_field( wp_unslash( $value ) );
 
         }
 

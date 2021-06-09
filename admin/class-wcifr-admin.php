@@ -29,8 +29,6 @@ class WCIFR_Admin {
 		$screen = get_current_screen();
 		if ( 'woocommerce_page_wc-importer-for-reviso' === $screen->id ) {
 
-            error_log( 'TEST' );
-
 			/*js*/
 			wp_enqueue_script( 'wcifr-js', WCIFR_URI . 'js/wcifr.js', array( 'jquery' ), '1.0', true );
 
