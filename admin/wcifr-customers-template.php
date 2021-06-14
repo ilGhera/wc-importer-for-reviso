@@ -33,13 +33,6 @@
 
 			</td>
 		</tr>
-		<tr>
-			<th scope="row"><?php esc_html_e( 'Group', 'wc-importer-for-reviso' ); ?></th>
-			<td>
-				<select class="wcifr-customers-groups" name="wcifr-customers-groups" multiple="multiple"></select>
-				<p class="description"><?php esc_html_e( 'Select one or more Reviso customers groups to import', 'wc-importer-for-reviso' ); ?></p>
-			</td>
-		</tr>
 	</table>
 	
 	<p class="submit">

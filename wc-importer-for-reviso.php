@@ -35,11 +35,13 @@ function load_wc_importer_for_reviso() {
 	define( 'WCIFR_ADMIN', WCIFR_DIR . 'admin/' );
 	define( 'WCIFR_DIR_NAME', basename( dirname( __FILE__ ) ) );
 	define( 'WCIFR_INCLUDES', WCIFR_DIR . 'includes/' );
+	define( 'WCIFR_CLASSES', WCIFR_DIR . 'classes/' );
 	define( 'WCIFR_SETTINGS', admin_url( 'admin.php?page=wc-importer-for-reviso' ) );
 
 	/*Files required*/
 	require_once( WCIFR_DIR . 'libraries/action-scheduler/action-scheduler.php' );
 	require_once( WCIFR_ADMIN . 'class-wcifr-admin.php' );
+	require_once( WCIFR_CLASSES . 'class-wcifr-temporary-data.php' );
 	require_once( WCIFR_INCLUDES . 'wcifr-functions.php' );
 	require_once( WCIFR_INCLUDES . 'class-wcifr-call.php' );
 	require_once( WCIFR_INCLUDES . 'class-wcifr-settings.php' );
