@@ -234,39 +234,45 @@ class WCIFR_Users {
 
             $type   = isset( $_POST['type'] ) ? sanitize_text_field( wp_unslash( $_POST['type'] ) ) : '';
             $role   = isset( $_POST['role'] ) ? sanitize_text_field( wp_unslash( $_POST['role'] ) ) : '';
-            $groups = isset( $_POST['groups'] ) && is_array( $_POST['groups'] ) ? sanitize_array( $_POST['groups'] ) : '';
+            $groups = isset( $_POST['groups'] ) && is_array( $_POST['groups'] ) ? sanitize_array( $_POST['groups'] ) : ''; // Temp.
 
             /*Salvo le impostazioni nel database*/
             update_option( 'wcifr-' . $type . '-role', $role );
-            update_option( 'wcifr-' . $type . '-groups', $groups );
+            update_option( 'wcifr-' . $type . '-groups', $groups ); // Temp.
 
             $results = $this->wcifr_call->call( 'get', $type );
 
             if ( isset( $results->collection ) && is_array( $results->collection ) ) {
 
-                $count = count( $results->collection );
-                $class = new WCIFR_Temporary_Data();
+                $count         = count( $results->collection );
+                $class         = new WCIFR_Temporary_Data();
+                $current_user  = wp_get_current_user();
+                $current_email = isset( $current_user->user_email ) ? $current_user->user_email : null;
 
                 foreach ( $results->collection as $user_data ) {
 
-                    $data = array(
-                        'role' => $role,
-                        'data' => $user_data,
-                    );
+                    if ( isset( $user_data->email ) && $user_data->email !== $current_email ) {
 
-                    $hash = md5( json_encode( $data ) );
+                        $data = array(
+                            'role' => $role,
+                            'data' => $user_data,
+                        );
 
-                    /* Add temporary data to the db table */
-                    $class->wcifr_add_temporary_data( $hash, json_encode( $data ) );
+                        $hash = md5( json_encode( $data ) );
 
-                    /*Schedule single event*/
-                    as_enqueue_async_action(
-                        'wcifr_import_single_user_event',
-                        array(
-                            'hash' => $hash,
-                        ),
-                        'wcifr_import_single_user'
-                    );
+                        /* Add temporary data to the db table */
+                        $class->wcifr_add_temporary_data( $hash, json_encode( $data ) );
+
+                        /*Schedule single event*/
+                        as_enqueue_async_action(
+                            'wcifr_import_single_user_event',
+                            array(
+                                'hash' => $hash,
+                            ),
+                            'wcifr_import_single_user'
+                        );
+
+                    }
 
                 }
 
