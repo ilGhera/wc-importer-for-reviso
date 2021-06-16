@@ -24,7 +24,8 @@ class WCIFR_Users {
 
 		}
 
-		$this->wcifr_call = new WCIFR_Call();
+        $this->temporary_data = new WCIFR_Temporary_Data( false, 'users' );
+		$this->wcifr_call     = new WCIFR_Call();
 
 	}
 
@@ -189,8 +190,7 @@ class WCIFR_Users {
 	 */
 	public function import_single_user( $hash ) {
 
-       	$class     = new WCIFR_Temporary_Data();
-    	$temp_data = $class->wcifr_get_temporary_data( $hash );
+    	$temp_data = $this->temporary_data->get_data( $hash );
 		$data      = $this->prepare_user_data( $temp_data );
 
 		if ( isset( $data['args'] ) && is_array( $data['args'] ) ) {
@@ -218,7 +218,7 @@ class WCIFR_Users {
 		}
 
         /* Delete temporary data */
-        $class->wcifr_delete_temporary_data( $hash );
+        $this->temporary_data->delete_data( $hash );
 
 	}
 
@@ -245,7 +245,6 @@ class WCIFR_Users {
             if ( isset( $results->collection ) && is_array( $results->collection ) ) {
 
                 $count         = count( $results->collection );
-                $class         = new WCIFR_Temporary_Data();
                 $current_user  = wp_get_current_user();
                 $current_email = isset( $current_user->user_email ) ? $current_user->user_email : null;
 
@@ -261,7 +260,7 @@ class WCIFR_Users {
                         $hash = md5( json_encode( $data ) );
 
                         /* Add temporary data to the db table */
-                        $class->wcifr_add_temporary_data( $hash, json_encode( $data ) );
+                        $this->temporary_data->add_data( $hash, json_encode( $data ) );
 
                         /*Schedule single event*/
                         as_enqueue_async_action(

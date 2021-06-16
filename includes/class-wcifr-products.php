@@ -1,6 +1,6 @@
 <?php
 /**
- * Export products to Reviso
+ * Import products from Reviso
  *
  * @author ilGhera
  * @package wc-importer-for-reviso/includes
@@ -17,14 +17,15 @@ class WCIFR_Products {
 
 		if ( $init ) {
 
-			add_action( 'wp_ajax_wcifr-export-products', array( $this, 'export_products' ) );
-			add_action( 'wp_ajax_wcifr-delete-remote-products', array( $this, 'delete_remote_products' ) );
-			add_action( 'wcifr_export_single_product_event', array( $this, 'export_single_product' ) );
-			add_action( 'wcifr_delete_remote_single_product_event', array( $this, 'delete_remote_single_product' ) );
+			add_action( 'wp_ajax_wcifr-import-products', array( $this, 'import_products' ) );
+			add_action( 'wcifr_import_single_product_event', array( $this, 'import_single_product' ) );
 
 		}
 
-		$this->wcifr_call = new WCIFR_Call();
+       	$this->temporary_data = new WCIFR_Temporary_Data( false, 'products' );
+		$this->wcifr_call     = new WCIFR_Call();
+        $this->post_status    = 1 === intval( get_option( 'wcifr-publish-new-products' ) ) ? 'publish' : 'draft';
+        $this->product_sku    = get_option( 'wcifr-product-sku' );
 
 	}
 
@@ -84,6 +85,8 @@ class WCIFR_Products {
 
 				if ( isset( $get_products->collection ) && ! empty( $get_products->collection ) ) {
 
+
+
 					$output->collection = array_merge( $output->collection, $get_products->collection );
 
 				} else {
@@ -96,28 +99,7 @@ class WCIFR_Products {
 
 		}
 
-		return $output;
-
-	}
-
-
-	/**
-	 * Check if a specific product exists in Reviso
-	 *
-	 * @param  string $sku_ready the WC product sku already formatted for Reviso endpoint.
-	 * @return bool
-	 */
-	private function product_exists( $sku_ready ) {
-
-		$output = true;
-
-		$response = $this->wcifr_call->call( 'get', 'products/' . $sku_ready );
-
-		if ( ( isset( $response->collection ) && empty( $response->collection ) ) || isset( $response->errorCode ) ) {
-
-			$output = false;
-
-		}
+        error_log( 'COUNT: ' . count( $output->collection ) );
 
 		return $output;
 
@@ -169,467 +151,218 @@ class WCIFR_Products {
 
     }
     
-    
-    /**
-	 * Add a new vat account to Reviso
-	 *
-	 * @param  int $vat_rate the vat rate.
-	 * @return int the vatCode
-	 */
-	public function add_remote_vat_account( $vat_rate ) {
-        
-		$args = array(
-			'account' => array(
-				'accountNumber' => 2201,
-			),
-			'vatType' => array(
-				'name'          => __( 'Sales VAT', 'wc-importer-for-reviso' ),
-				'vatTypeNumber' => 1,
-			),
-			//'name' => 'Acquisti con IVA al ' . $vat_rate . '%',
-			'name'           => sprintf( __( '%d%% VAT purchases', 'wc-importer-for-reviso' ), $vat_rate ),
-			'ratePercentage' => $vat_rate,
-			'vatReportSetup' => array(
-				'vatReportSetupNumber' => 24, // For reduced rates.
-			),
-		);
-
-		$vat_account = $this->wcifr_call->call( 'post', 'vat-accounts', $args );
-
-		if ( isset( $vat_account->vatCode ) ) {
-
-			return $vat_account->vatCode;
-
-		}
-
-	}
-
-
-	/**
-	 * Get a specific vat account from Reviso or create it necessary
-	 *
-	 * @param  int $vat_rate the vat rate.
-	 * @return array  vat accounts available in Reviso.
-	 */
-	public function get_remote_vat_code( $vat_rate ) {
-
-		$output = null;
-
-		$end = '?filter=vatType.vatTypeNumber$eq:1$and:ratePercentage$eq:' . $vat_rate;
-
-		$response = $this->wcifr_call->call( 'get', 'vat-accounts' . $end );
-
-		if ( isset( $response->collection ) && ! empty( $response->collection ) ) {
-
-			$output = $response->collection[0]->vatCode;
-
-		} else {
-
-			$output = $this->add_remote_vat_account( $vat_rate );
-
-		}
-
-		return $output;
-	}
-
-
-	/**
-	 * Add an account in Reviso
-	 *
-	 * @param  int $vat_rate used to create the account number.
-	 * @return int the number of the account created
-	 */
-	private function add_remote_account( $vat_rate ) {
-
-		/*Get the remote vat code*/
-		$vat_code = $this->get_remote_vat_code( $vat_rate ); // temp.
-
-        $account_number = $vat_rate < 10 ? 580550 . $vat_rate : 58055 . $vat_rate;
-
-		$args = array(
-			'accountCategory' => array(
-				'description' => 'Sales of products',
-				'accountCategoryNumber' => 48,
-			),
-			'accountType'   => 'profitAndLoss',
-			'balance'       => 0,
-			'debitCredit'   => 'credit',
-			'accountNumber' => $account_number,
-			'name'          => __( 'Sale of goods VAT ' . $vat_rate, 'wc-importer-for-reviso' ),
-			'vatAccount'    => array(
-				'vatCode' => $vat_code,
-			),
-		);
-
-		$account = $this->wcifr_call->call( 'post', 'accounts/', $args );
-
-		if ( isset( $account->accountNumber ) && $account_number === $account->accountNumber ) {
-
-			return $account->accountNumber;
-
-		}
-
-	}
-
-
-	/**
-	 * Get a specific account in Reviso and create it if it does not exist
-	 *
-	 * @param  int $vat_rate used for create the account number.
-	 * @return bool
-	 */
-	private function get_remote_account_number( $vat_rate ) {
-
-		$account_number = $vat_rate < 10 ? 580550 . $vat_rate : 58055 . $vat_rate;
-
-		$account = $this->wcifr_call->call( 'get', 'accounts/' . $account_number );
-
-		if ( ! isset( $account->accountNumber ) || $account_number != $account->accountNumber ) {
-
-			$this->add_remote_account( $vat_rate );
-
-		}
-
-		return $account_number;
-
-	}
-
-
-	/**
-	 * Add a product group in Reviso
-	 *
-     * @param  int    $vat_rate           the product group number to search.
-	 * @param  string $product_group_name the remote product group name.
-	 * @return object the remote product group
-	 */
-    private function add_remote_product_group( $vat_rate, $product_group_name ) {
-
-        $product_group_number = 99 != $vat_rate ? ( intval( 100 + $vat_rate ) ) : $vat_rate;
-		$account_number = $this->get_remote_account_number( $vat_rate );
-		$name           = $vat_rate == $product_group_name ? sprintf( __( '%d%% VAT', 'wc-importer-for-reviso' ), $vat_rate ) : $product_group_name;
-
-		$args = array(
-			'productGroupNumber' => $product_group_number,
-			'name'               => $name,
-			'salesAccountsList'  => array(
-
-				0 => array(
-					'salesAccount' => array(
-						'accountNumber' => $account_number,
-					),
-					'vatZone' => array(
-						'vatZoneNumber' => 1,
-					),
-				),
-
-			),
-
-        );
-
-        /* Only with inventory module enabled */ 
-        if ( $this->inventory_module() ) {
-        
-            $args['inventory'] =  array(
-				'purchaseAccount' => array(
-					'accountNumber' => 6625005,
-				),
-            ); 
-        
-        }
-
-		$output = $this->wcifr_call->call( 'post', 'product-groups/', $args );
-
-		return $output;
-
-	}
-
-
-	/**
-	 * Get the number of a specific product group from Reviso
-	 *
-     * @param  int  $vat_rate the product group number to search.
-     * @param  bool $standard true for standard VAT rate product group.
-	 * @return int
-	 */
-	private function get_remote_product_group( $vat_rate, $standard = false ) {
-
-		$output = null;
-        $product_group_number = 99 != $vat_rate ? ( intval( 100 + $vat_rate ) ) : $vat_rate;
-		$remote_product_group = $this->wcifr_call->call( 'get', 'product-groups/' . $product_group_number );
-
-		if ( isset( $remote_product_group->productGroupNumber ) ) {
-
-			$output = $remote_product_group->productGroupNumber;
-
-        } else {
-
-            if ( 99 == $product_group_number ) {
-
-                $wc_tax        = null; 
-                $tax_rate_name = __( 'No VAT', 'wc-importer-for-reviso' );
-
-            } else {
-
-                $wc_tax        = $standard ? $this->get_wc_tax_class( 'standard' ) : $this->get_wc_tax_class( $vat_rate );
-                $tax_rate_name = isset( $wc_tax->tax_rate_name ) ? $wc_tax->tax_rate_name : '';
-                
-            }
-
-			$remote_product_group = $this->add_remote_product_group( $vat_rate, $tax_rate_name );
-
-			if ( isset( $remote_product_group->productGroupNumber ) ) {
-
-				$output = $remote_product_group->productGroupNumber;
-
-			}
-
-		}
-
-		return $output;
-
-	}
-
-
-	/**
-	 * The Reviso product group is based on the vat class applied to the product
-	 * This method get the WC tax class and passes the value to another function for searching the Reviso product group
-	 * The product group will be created if necessary
-	 *
-	 * @param  bool   $taxable   if not the Reviso product group 99 will be used.
-	 * @param  string $tax_class the WC tax class assigned to the product.
-	 * @return int             the product group number
-	 */
-	private function get_product_group( $taxable, $tax_class = null ) {
-
-        $standard = false;
-		$output   = null;
-
-		if ( ! $taxable ) {
-
-            $tax_class = 99; //5;
-
-        }
-
-        if ( null == $tax_class ) {
-            
-            $tax_class = $this->get_standard_rate();
-            $standard  = true;
-
-        } elseif ( ! is_numeric( $tax_class ) ) {
-
-            $tax_class_info = $this->get_wc_tax_class( $tax_class ); 
-
-            if ( isset( $tax_class_info->tax_rate ) ) {
-
-                $tax_class = intval( $tax_class_info->tax_rate );
-                
-            } else {
-                
-                $tax_class = 99;
-        
-            }
-
-        }
-
-        $output = $this->get_remote_product_group( $tax_class, $standard );
-
-        return $output;
-
-	}
-
-
-	/**
-	 * Prepare the sku to get the right product endpoint
-	 *
-	 * @param  string $sku the product sku.
-	 * @return string
-	 */
-	private function format_sku( $sku ) {
-
-		$output = str_replace( '_', '_8_', $sku );
-		$output = str_replace( '<', '_0_', $output );
-		$output = str_replace( '>', '_1_', $output );
-		$output = str_replace( '*', '_2_', $output );
-		$output = str_replace( '%', '_3_', $output );
-		$output = str_replace( ':', '_4_', $output );
-		$output = str_replace( '&', '_5_', $output );
-		$output = str_replace( '/', '_6_', $output );
-		$output = str_replace( '\\', '_7_', $output );
-		$output = str_replace( ' ', '_9_', $output );
-		$output = str_replace( '?', '_10_', $output );
-		$output = str_replace( '.', '_11_', $output );
-		$output = str_replace( '#', '_12_', $output );
-		$output = str_replace( '+', '_13_', $output );
-
-		return $output;
-
-	}
-
 
 	/**
 	 * Prepare the single product data for Reviso
 	 *
-	 * @param  object $product the WC product.
+	 * @param  string $product_data the Reviso product data json encoded.
+     *
 	 * @return array
 	 */
-	private function prepare_product_data( $product ) {
+	private function prepare_product_data( $product_data ) {
 
-        $sku = $product->get_sku() ? $product->get_sku() : ( 'wc-' . $product->get_id() );
+        $data  = json_decode( $product_data );
+        error_log( 'DATA: ' . print_r( $data, true ) );
 
-		/*Sale price*/
-		$sale_price  = $product->get_sale_price() ? $product->get_sale_price() : $product->get_regular_price();
-		$description = utf8_encode( $product->get_description() );
+        $name           = isset( $data->name ) ? $data->name : null;
+        $description    = isset( $data->description ) ? $data->description : $name;
+        $product_number = isset( $data->productNumber ) ? $data->productNumber : null;
+        $price          = isset( $data->recommendedPrice ) ? wc_format_decimal( $data->recommendedPrice, 2 ) : 0;
+        $sell_price     = isset( $data->salesPrice ) ? wc_format_decimal( $data->salesPrice, 2 ) : 0;
 
-		/*Get the product volume if available*/
-		$volume = 0;
-		$width  = $product->get_width();
+        /* Sku */
+        $sku = $product_number;
 
-		if ( $width ) {
+        if ( isset( $data->barCode ) && $this->product_sku ) {
 
-			$height = $product->get_height();
-			$length = $product->get_length();
+            $sku = $data->barCode;
 
-			if ( $width && $height && $length ) {
+        }
 
-				$volume = $width * $height * $length;
+        /* Stock */
+        $available_qty  = null;
+        $stock_status   = null;
+        $manage_stock   = 'no';
+        $total_sales    = null;
 
-			}
+        if ( isset( $data->inventory ) ) {
 
-		}
+            /* error_log( 'INVENTORY: ' . print_r( $data->inventory, true ) ); */
 
-		$output = array(
-			'productNumber'    => avoid_length_exceed( $sku, 25 ),
-			'barred'           => false,
-			'name'             => avoid_length_exceed( $product->get_name(), 300 ),
-			'description'      => avoid_length_exceed( $description, 500 ),
-			'salesPrice'       => floatval( wc_format_decimal( $sale_price, 2 ) ),
-			'productGroup'     => array(
-				'productGroupNumber' => $this->get_product_group( $product->is_taxable(), $product->get_tax_class() ),
-			),
-			'recommendedPrice' => floatval( wc_format_decimal( $product->get_regular_price(), 2 ) ),
-			'unit'             => array(
-				'unitNumber' => 1,
-			),
-		);
+            $available_qty = isset( $data->inventory->available ) ? $data->inventory->available : 0;
+            $stock_status  = 0 < $available_qty ? 'instock' : 'outofstock';
+            $manage_stock  = 'yes';
+            $total_sales   = isset( $data->inventory->orderedByCustomers ) ? $data->inventory->orderedByCustomers : null;
 
-        /* Only with inventory module enabled */ 
-        if ( $this->inventory_module() ) {
-        
-            $output['inventory'] = array(
-				'packageVolume' => $volume,
-			);
- 
-        } 
+        }
+
+        $args = array(
+            'post_title'   => $name,
+            'post_content' => $description,
+            'post_type'    => 'product',
+            'post_status'  => $this->post_status,
+
+        );
+
+        $post_id = wp_insert_post( $args );
+
+        if ( ! is_wp_error( $post_id ) ) {
+
+            wp_set_object_terms( $post_id, 'simple', 'product_type' );
+
+            update_post_meta( $post_id, '_sku', $sku );
+            update_post_meta( $post_id, '_stock', $available_qty );
+            update_post_meta( $post_id, '_stock_status', $stock_status );
+            update_post_meta( $post_id, '_manage_stock', $manage_stock );
+            update_post_meta( $post_id, '_visibility', 'visible' );
+            update_post_meta( $post_id, '_regular_price', $price );
+            update_post_meta( $post_id, 'total_sales', $total_sales );
+
+            /* update_post_meta( $post_id, xxx ); */
+            /* update_post_meta( $post_id, xxx ); */
+
+            if ( $sell_price ) {
+
+                update_post_meta( $post_id, '_price', $sell_price );
+                update_post_meta( $post_id, '_sell_price', $sell_price );
+                update_post_meta( $post_id, '_sale_price', $sell_price );
+
+            } else {
+
+                update_post_meta( $post_id, '_price', $price );
+
+            }
+
+        }
+
+	}
+
+
+    /**
+     * Turn a multidimensional array into a sinple one
+     *
+     * @param array $array the multidimensional array.
+     *
+     * @return array
+     */
+    private function prepare_array( $array ) {
+
+        $output = array();
+
+        if ( is_array( $array ) ) {
+            
+            foreach ( $array as $element ) {
+
+                if ( isset( $element['name'], $element['value'] ) )
+
+                $output[ $element['name'] ] = $element['value'];
+
+            }
+
+        }
 
         return $output;
 
-	}
+    }
+
+
+    /**
+     * Save the product import options
+     *
+     * @param array @data serialized form data values.
+     *
+     * @return void
+     */
+    public function save_options( $data = null ) {
+
+        if ( $data && is_array( $data ) ) {
+
+            $options = $this->prepare_array( $data );
+
+            $wcifr_publish_new_products = isset( $options['wcifr-publish-new-products'] ) ? sanitize_text_field( $options['wcifr-publish-new-products'] ) : 0;
+            update_option( 'wcifr-publish-new-products', $wcifr_publish_new_products );
+
+            $wcifr_product_sku = isset( $options['wcifr-product-sku'] ) ? sanitize_text_field( $options['wcifr-product-sku'] ) : 0;
+            update_option( 'wcifr-product-sku', $wcifr_product_sku );
+
+        } else {
+
+            update_option( 'wcifr-publish-new-products', 0 );
+            update_option( 'wcifr-product-sku', 0 );
+
+        }
+
+    }
 
 
 	/**
-	 * Export single product to Reviso
+	 * Import single product from Reviso
 	 *
-	 * @param  int $product_id the product id.
+	 * @param  string $hash the hash code of the specific data. 
+     *
+     * @return void
 	 */
-	public function export_single_product( $product_id ) {
+	public function import_single_product( $hash ) {
 
-		$product = wc_get_product( $product_id );
+    	$temp_data = $this->temporary_data->get_data( $hash );
+		$data      = $this->prepare_product_data( $temp_data );
 
-		if ( $product ) {
 
-            $sku = $product->get_sku() ? $product->get_sku() : ( 'wc-' . $product->get_id() );
-
-			/*Avoid parent product export*/
-			if ( ! $product->is_type( 'variable' ) ) {
-
-				$args = $this->prepare_product_data( $product );
-                
-				if ( $args ) {
-
-					$end = $this->format_sku( $sku );
-
-					if ( $this->product_exists( $end ) ) {
-
-                        $output = $this->wcifr_call->call( 'put', 'products/' . $end, $args ); // temp.
-
-					} else {
-
-                        $output = $this->wcifr_call->call( 'post', 'products', $args );
-                    
-                    }
-
-				}
-
-			}
-
-		}
+        /* Delete temporary data */
+        $this->temporary_data->delete_data( $hash );
 
 	}
 
 
 	/**
-	 * Export WC product to Reviso
+	 * Import Reviso products in WooCommerce
+     *
+     * @return void
 	 */
-	public function export_products() {
+	public function import_products() {
 
-		if ( isset( $_POST['wcifr-export-products-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcifr-export-products-nonce'] ), 'wcifr-export-products' ) ) {
+		if ( isset( $_POST['wcifr-import-products-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcifr-import-products-nonce'] ), 'wcifr-import-products' ) ) {
 
-			$class    = new WCIFR_Orders();
-			$terms    = isset( $_POST['terms'] ) ? $class->sanitize_array( $_POST['terms'] ) : '';
-			$response = array();
+            $options = isset( $_POST['options'] ) ? $_POST['options'] : null;
 
-			$args = array(
-				'post_type' => array(
-					'product',
-					'product_variation',
-				),
-				'post_status'    => 'publish',
-				'posts_per_page' => -1,
-			);
+            /* Save options */
+            $this->save_options( $options );
 
-			/*Modify the query based on the admin categories selection */
-			if ( is_array( $terms ) && ! empty( $terms ) ) {
+            /* Get products */
+            $products = $this->get_remote_products();
 
-				$args['tax_query'] = array(
-					array(
-						'taxonomy' => 'product_cat',
-						'field'    => 'term_id',
-						'terms'    => $terms,
-					),
-				);
+            if ( isset( $products->collection ) && is_array( $products->collection ) ) {
 
-			}
+                $n = 0;
 
-			/*Update the db*/
-			update_option( 'wcifr-products-categories', $terms );
-
-			$response = array();
-
-			$posts = get_posts( $args );
-
-			if ( $posts ) {
-
-				$n = 0;
-
-				foreach ( $posts as $post ) {
+				foreach ( $products->collection as $data ) {
 
 					$n++;
 
-					/*Schedule single event*/
-					as_enqueue_async_action(
-						'wcifr_export_single_product_event',
-						array(
-							'product_id' => $post->ID,
-						),
-						'wcifr_export_single_product'
-					);
+                    if ( 2 === $n ) {
+
+                        $hash = md5( json_encode( $data ) );
+
+                        /* Add temporary data to the db table */
+                        $this->temporary_data->add_data( $hash, json_encode( $data ) );
+                        
+                        /*Schedule single event*/
+                        as_enqueue_async_action(
+                            'wcifr_import_single_product_event',
+                            array(
+                                'hash' => $hash,
+                            ),
+                            'wcifr_import_single_product'
+                        );
+
+                    }
 
 				}
 
 				$response[] = array(
 					'ok',
 					/* translators: the products count */
-					esc_html( sprintf( __( '%d product(s) export process has begun', 'wc-importer-for-reviso' ), $n ) ),
+					esc_html( sprintf( __( '%d product(s) import process has begun', 'wc-importer-for-reviso' ), $n ) ),
 				);
 
 
@@ -637,83 +370,12 @@ class WCIFR_Products {
 
 				$response[] = array(
 					'error',
-					esc_html( __( 'ERROR! There are not products to export', 'wc-importer-for-reviso' ) ),
+					esc_html( __( 'ERROR! There are not products to import', 'wc-importer-for-reviso' ) ),
 				);
 			
-			}
-				
-			echo json_encode( $response );
+            }
 
 		}
-
-		exit;
-
-	}
-
-
-	/**
-	 * Delete a single product on Reviso
-	 *
-	 * @param  int $product_number the product to delete in Reviso.
-	 */
-	public function delete_remote_single_product( $product_number ) {
-
-		$end    = $this->format_sku( $product_number );
-		$output = $this->wcifr_call->call( 'delete', 'products/' . $end );
-
-		/*Log the error*/
-		if ( ( isset( $output->errorCode ) || isset( $output->developerHint ) ) && isset( $output->message ) ) {
-
-			error_log( 'WCIFR ERROR | Reviso product ' . $product_number . ' | ' . $output->message );
-
-		}
-
-	}
-
-
-	/**
-	 * Delete all the products in Reviso
-	 */
-	public function delete_remote_products() {
-
-		$products = $this->get_remote_products();
-
-		if ( isset( $products->collection ) && count( $products->collection ) > 0 ) {
-
-			$n = 0;
-			$response = array();
-
-			foreach ( $products->collection as $product ) {
-
-				$n++;
-
-				/*Schedule single event*/
-				as_enqueue_async_action(
-					'wcifr_delete_remote_single_product_event',
-					array(
-						'product_number' => $product->productNumber,
-					),
-					'wcifr_delete_remote_single_product'
-				);
-
-			}
-
-			$response[] = array(
-				'ok',
-				/* translators: the products count */
-				esc_html( sprintf( __( '%d product(s) delete process has begun', 'wc-importer-for-reviso' ), $n ) ),
-			);
-
-		} else {
-
-			$response[] = array(
-				'error',
-				esc_html( __( 'ERROR! There are not products to delete', 'wc-importer-for-reviso' ) ),
-			);
-
-		}
-
-		echo json_encode( $response );
 
 		exit;
 
@@ -721,3 +383,4 @@ class WCIFR_Products {
 
 }
 new WCIFR_Products( true );
+

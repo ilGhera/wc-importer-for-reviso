@@ -388,12 +388,12 @@ var wcifrController = function() {
 				self.wcifr_response_loading();
 				self.wcifr_response_scroll();
 
-				var terms = $('.wcifr-products-categories').val();
+                var formData = $('.wcifr-form.products').serializeArray();
 
 				var data = {
 					'action': 'wcifr-import-products',
 					'wcifr-import-products-nonce': wcifrProducts.importNonce,
-					'terms': terms
+					'options': formData
 				}
 
 				$.post(ajaxurl, data, function(response){

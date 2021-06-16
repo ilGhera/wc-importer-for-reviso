@@ -6,41 +6,48 @@
  *
  * @author ilGhera
  * @package wc-importer-for-reviso-premium/classes
- * @since 1.3.6
+ * @since 0.9.0
  */
 class WCIFR_Temporary_Data {
 
 	/**
 	 * The constructor
 	 *
-	 * @param boolean $init true per eseguire hooks iniziali
+	 * @param boolean $init true per eseguire hooks iniziali.
+     * @param  string $type users or products.
+     *
+     * @return void
 	 */
-	public function __construct( $init = false ) {
+	public function __construct( $init = false, $type = false ) {
 
 		if ( $init ) {
 
-			$this->wcifr_db_tables();
+			$this->db_tables();
 
-		}
+        }
+
+        $this->type = $type;
 
 	}
+
 
 	/**
 	 * Create the db table 
 	 *
 	 * @return void
 	 */
-	public function wcifr_db_tables() {
+	public function db_tables() {
 
 		global $wpdb;
 
-		$temporary_data   = $wpdb->prefix . 'wcifr_temporary_data';
+		$temporary_users_data    = $wpdb->prefix . 'wcifr_users_temporary_data';
+		$temporary_products_data = $wpdb->prefix . 'wcifr_products_temporary_data';
 
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '$temporary_data'" ) != $temporary_data ) {
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '$temporary_users_data'" ) != $temporary_users_data ) {
 
 			$charset_collate = $wpdb->get_charset_collate();
 
-			$sql = "CREATE TABLE $temporary_data (
+			$sql = "CREATE TABLE $temporary_users_data (
 				id 			bigint(20) NOT NULL AUTO_INCREMENT,
 				hash        varchar(255) NOT NULL,
 				data 		longtext NOT NULL,
@@ -53,7 +60,38 @@ class WCIFR_Temporary_Data {
 
 		}
 
-	}
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '$temporary_products_data'" ) != $temporary_products_data ) {
+
+			$charset_collate = $wpdb->get_charset_collate();
+
+			$sql = "CREATE TABLE $temporary_products_data (
+				id 			bigint(20) NOT NULL AUTO_INCREMENT,
+				hash        varchar(255) NOT NULL,
+				data 		longtext NOT NULL,
+				UNIQUE KEY id (id)
+			) $charset_collate;";
+
+			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+
+			dbDelta( $sql );
+
+		}
+
+    }
+
+
+    /**
+     * The DB table name
+     *
+     * @return string
+     */
+    private function table_name() {
+
+        $output = 'users' === $this->type ? 'wcifr_users_temporary_data' : 'wcifr_products_temporary_data';
+
+        return $output;
+
+    }
 
 
 	/**
@@ -63,11 +101,11 @@ class WCIFR_Temporary_Data {
      *
 	 * @return array
 	 */
-	public function wcifr_get_temporary_data( $hash ) {
+	public function get_data( $hash ) {
 
-		global $wpdb;
+        global $wpdb;
 
-		$query = 'SELECT * FROM ' . $wpdb->prefix . "wcifr_temporary_data WHERE hash = '$hash'";
+		$query = 'SELECT * FROM ' . $wpdb->prefix . $this->table_name() . " WHERE hash = '$hash'";
 
 		$results = $wpdb->get_results( $query, ARRAY_A );
 
@@ -88,16 +126,16 @@ class WCIFR_Temporary_Data {
      *
 	 * @return void
 	 */
-	public function wcifr_add_temporary_data( $hash, $data ) {
+	public function add_data( $hash, $data ) {
 
 		global $wpdb;
 
-		$results = $this->wcifr_get_temporary_data( $hash );
+		$results = $this->get_data( $hash );
 
 		if ( null == $results ) {
 
 			$wpdb->insert(
-				$wpdb->prefix . 'wcifr_temporary_data',
+				$wpdb->prefix . $this->table_name(),
 				array(
 					'hash' => $hash,
 					'data' => $data,
@@ -120,12 +158,12 @@ class WCIFR_Temporary_Data {
      *
 	 * @return void
 	 */
-	public function wcifr_delete_temporary_data( $hash ) {
+	public function delete_data( $hash ) {
 
 		global $wpdb;
 
 		$wpdb->delete(
-			$wpdb->prefix . 'wcifr_temporary_data',
+			$wpdb->prefix . $this->table_name(),
 			array(
 				'hash' => $hash,
 			),

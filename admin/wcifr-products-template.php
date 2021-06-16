@@ -7,39 +7,32 @@
  * @since 0.9.0
  */
 
+/* Get data */
+$wcifr_publish_new_products = get_option( 'wcifr-publish-new-products' );
+$wcifr_product_sku          = get_option( 'wcifr-product-sku' );
 ?>
 
-<!-- Export form -->
-<form name="wcifr-export-products" class="wcifr-form"  method="post" action="">
+<!-- Import form -->
+<form name="wcifr-import-products" class="wcifr-form products"  method="post" action="">
 
 	<table class="form-table">
 		<tr>
-			<th scope="row"><?php esc_html_e( 'Products categories', 'wc-importer-for-reviso' ); ?></th>
+            <th scope="row"><?php esc_html_e( 'Publish new products', 'wc-importer-for-reviso' ); ?></th>
 			<td>
-				<select class="wcifr-products-categories wcifr-select" name="wcifr-products-categories[]" multiple data-placeholder="<?php esc_html_e( 'All categories', 'wc-importer-for-reviso' ); ?>">
-					<?php
-					$terms = get_terms( 'product_cat' );
-
-					/*Get the value from the db*/
-					$products_categories = get_option( 'wcifr-products-categories' );
-
-					if ( $terms ) {
-						foreach ( $terms as $single_term ) {
-
-							$selected = is_array( $products_categories ) && in_array( $single_term->term_id, $products_categories ) ? ' selected="selected"' : '';
-
-							echo '<option value="' . esc_attr( $single_term->term_id ) . '"' . esc_html( $selected ) . '>' . esc_html( $single_term->name ) . '</option>';
-						}
-					}
-					?>
-
-				</select>
-				<p class="description"><?php esc_html_e( 'Select which categories to send to Reviso', 'wc-importer-for-reviso' ); ?></p>
+				<input type="checkbox" class="wcifr-publish-new-products" name="wcifr-publish-new-products" value="1"<?php echo 1 == $wcifr_publish_new_products ? ' checked="checked"' : ''; ?>>
+                <p class="description"><?php esc_html_e( 'Publish new products directly', 'wc-importer-for-reviso' ); ?></p>
+			</td>
+		</tr>
+		<tr>
+            <th scope="row"><?php esc_html_e( 'Product sku', 'wc-importer-for-reviso' ); ?></th>
+			<td>
+				<input type="checkbox" class="wcifr-product-sku" name="wcifr-product-sku" value="1"<?php echo 1 == $wcifr_product_sku ? ' checked="checked"' : ''; ?>>
+                <p class="description"><?php echo wp_kses_post( __( 'Use <i>Bar Code instead</i> of <i>Product Number</i> if available', 'wc-importer-for-reviso' ) ); ?></p>
 			</td>
 		</tr>
 	</table>
 
-	<input type="submit" name="wcifr-products-export" class="button-primary wcifr export products" value="<?php esc_html_e( 'Export to Reviso', 'wc-importer-for-reviso' ); ?>">
+	<input type="submit" name="wcifr-products-import" class="button-primary wcifr import products" value="<?php esc_html_e( 'Import from Reviso', 'wc-importer-for-reviso' ); ?>">
 
 </form>
 
@@ -64,14 +57,14 @@
 
 <?php
 /*Nonce*/
-$export_products_nonce = wp_create_nonce( 'wcifr-export-products' );
+$import_products_nonce = wp_create_nonce( 'wcifr-import-products' );
 $delete_products_nonce = wp_create_nonce( 'wcifr-delete-products' );
 
 wp_localize_script(
 	'wcifr-js',
 	'wcifrProducts',
 	array(
-		'exportNonce' => $export_products_nonce,
+		'importNonce' => $import_products_nonce,
 		'deleteNonce' => $delete_products_nonce,
 	)
 );
