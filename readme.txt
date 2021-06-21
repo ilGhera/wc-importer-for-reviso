@@ -50,7 +50,7 @@ This plugin sends data to an external service, like the products bought by the u
 == Changelog ==
 
 = 0.9.0 = 
-Release Date: xxxxxxx June 2021
+Release Date: 21 June 2021
 
 * First release
 
