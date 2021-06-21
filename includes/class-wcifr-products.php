@@ -550,23 +550,19 @@ class WCIFR_Products {
 
 					$n++;
 
-                    if ( in_array( $n, array( 2,3,4 ) ) ) {
+                    $hash = md5( json_encode( $data ) );
 
-                        $hash = md5( json_encode( $data ) );
-
-                        /* Add temporary data to the db table */
-                        $this->temporary_data->add_data( $hash, json_encode( $data ) );
-                        
-                        /*Schedule single event*/
-                        as_enqueue_async_action(
-                            'wcifr_import_single_product_event',
-                            array(
-                                'hash' => $hash,
-                            ),
-                            'wcifr_import_single_product'
-                        );
-
-                    }
+                    /* Add temporary data to the db table */
+                    $this->temporary_data->add_data( $hash, json_encode( $data ) );
+                    
+                    /* Schedule single event */
+                    as_enqueue_async_action(
+                        'wcifr_import_single_product_event',
+                        array(
+                            'hash' => $hash,
+                        ),
+                        'wcifr_import_single_product'
+                    );
 
 				}
 
