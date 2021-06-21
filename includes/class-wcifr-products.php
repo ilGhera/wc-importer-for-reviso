@@ -22,10 +22,15 @@ class WCIFR_Products {
 
 		}
 
-       	$this->temporary_data = new WCIFR_Temporary_Data( false, 'products' );
-		$this->wcifr_call     = new WCIFR_Call();
-        $this->post_status    = 1 === intval( get_option( 'wcifr-publish-new-products' ) ) ? 'publish' : 'draft';
-        $this->product_sku    = get_option( 'wcifr-product-sku' );
+       	$this->temporary_data         = new WCIFR_Temporary_Data( false, 'products' );
+		$this->wcifr_call             = new WCIFR_Call();
+        $this->post_status            = 1 === intval( get_option( 'wcifr-publish-new-products' ) ) ? 'publish' : 'draft';
+        $this->product_sku            = get_option( 'wcifr-product-sku' );
+        $this->wc_prices_include_tax  = 'yes' === get_option( 'woocommerce_prices_include_tax' ) ? true : false;
+        $this->short_description      = get_option( 'wcifr-short-description' ); 
+        $this->exclude_title          = get_option( 'wcifr-exclude-title' ); 
+        $this->exclude_description    = get_option( 'wcifr-exclude-description' ); 
+        $this->products_not_available = get_option( 'wcifr-products-not-available' ); 
 
 	}
 
@@ -56,6 +61,33 @@ class WCIFR_Products {
                 } 
 
             }
+
+        }
+
+        return $output;
+
+    }
+
+
+    /**
+     * Generate the short product description
+     *
+     * @param  string $description the full product description.
+     *
+     * @return string
+     */
+    private function wcifr_get_short_description( $description ) {
+
+        $output      = null;
+        $description = wp_strip_all_tags( $description );
+
+        if ( strlen( $description ) > 340 ) {
+
+            $output = substr( $description, 0, 340 ) . '...';
+
+        } else {
+
+            $output = $description;
 
         }
 
@@ -99,141 +131,7 @@ class WCIFR_Products {
 
 		}
 
-        error_log( 'COUNT: ' . count( $output->collection ) );
-
 		return $output;
-
-	}
-
-
-	/**
-	 * Get WC tax class details
-	 *
-	 * @param  string $tax_rate_class set for a specific tax rate class.
-	 * @return object
-	 */
-	private function get_wc_tax_class( $tax_rate_class = 'all' ) {
-
-		global $wpdb;
-
-        $tax_rate_class = 'standard' === $tax_rate_class ? null : $tax_rate_class;
-		$where          = 'all' !== $tax_rate_class ? " WHERE tax_rate_class = '$tax_rate_class'" : '';
-
-		$query = 'SELECT * FROM ' . $wpdb->prefix . 'woocommerce_tax_rates' . $where;
-
-		$results = $wpdb->get_results( $query );
-
-		if ( $results && isset( $results[0] ) ) {
-			return $results[0];
-		}
-
-	}
-
-
-   /**
-    * Get the standard tax rate
-    *
-    * @return int
-    */ 
-    private function get_standard_rate() {
-
-        $result = $this->get_wc_tax_class( 'standard' );
-
-        if ( isset( $result->tax_rate ) ) {
-
-            return intval( $result->tax_rate );
-            
-        } else {
-    
-            return 99;
-
-        }
-
-    }
-    
-
-	/**
-	 * Prepare the single product data for Reviso
-	 *
-	 * @param  string $product_data the Reviso product data json encoded.
-     *
-	 * @return array
-	 */
-	private function prepare_product_data( $product_data ) {
-
-        $data  = json_decode( $product_data );
-        error_log( 'DATA: ' . print_r( $data, true ) );
-
-        $name           = isset( $data->name ) ? $data->name : null;
-        $description    = isset( $data->description ) ? $data->description : $name;
-        $product_number = isset( $data->productNumber ) ? $data->productNumber : null;
-        $price          = isset( $data->recommendedPrice ) ? wc_format_decimal( $data->recommendedPrice, 2 ) : 0;
-        $sell_price     = isset( $data->salesPrice ) ? wc_format_decimal( $data->salesPrice, 2 ) : 0;
-
-        /* Sku */
-        $sku = $product_number;
-
-        if ( isset( $data->barCode ) && $this->product_sku ) {
-
-            $sku = $data->barCode;
-
-        }
-
-        /* Stock */
-        $available_qty  = null;
-        $stock_status   = null;
-        $manage_stock   = 'no';
-        $total_sales    = null;
-
-        if ( isset( $data->inventory ) ) {
-
-            /* error_log( 'INVENTORY: ' . print_r( $data->inventory, true ) ); */
-
-            $available_qty = isset( $data->inventory->available ) ? $data->inventory->available : 0;
-            $stock_status  = 0 < $available_qty ? 'instock' : 'outofstock';
-            $manage_stock  = 'yes';
-            $total_sales   = isset( $data->inventory->orderedByCustomers ) ? $data->inventory->orderedByCustomers : null;
-
-        }
-
-        $args = array(
-            'post_title'   => $name,
-            'post_content' => $description,
-            'post_type'    => 'product',
-            'post_status'  => $this->post_status,
-
-        );
-
-        $post_id = wp_insert_post( $args );
-
-        if ( ! is_wp_error( $post_id ) ) {
-
-            wp_set_object_terms( $post_id, 'simple', 'product_type' );
-
-            update_post_meta( $post_id, '_sku', $sku );
-            update_post_meta( $post_id, '_stock', $available_qty );
-            update_post_meta( $post_id, '_stock_status', $stock_status );
-            update_post_meta( $post_id, '_manage_stock', $manage_stock );
-            update_post_meta( $post_id, '_visibility', 'visible' );
-            update_post_meta( $post_id, '_regular_price', $price );
-            update_post_meta( $post_id, 'total_sales', $total_sales );
-
-            /* update_post_meta( $post_id, xxx ); */
-            /* update_post_meta( $post_id, xxx ); */
-
-            if ( $sell_price ) {
-
-                update_post_meta( $post_id, '_price', $sell_price );
-                update_post_meta( $post_id, '_sell_price', $sell_price );
-                update_post_meta( $post_id, '_sale_price', $sell_price );
-
-            } else {
-
-                update_post_meta( $post_id, '_price', $price );
-
-            }
-
-        }
 
 	}
 
@@ -273,7 +171,7 @@ class WCIFR_Products {
      *
      * @return void
      */
-    public function save_options( $data = null ) {
+    private function save_options( $data = null ) {
 
         if ( $data && is_array( $data ) ) {
 
@@ -285,14 +183,328 @@ class WCIFR_Products {
             $wcifr_product_sku = isset( $options['wcifr-product-sku'] ) ? sanitize_text_field( $options['wcifr-product-sku'] ) : 0;
             update_option( 'wcifr-product-sku', $wcifr_product_sku );
 
+            $wcifr_short_description = isset( $options['wcifr-short-description'] ) ? sanitize_text_field( $options['wcifr-short-description'] ) : 0;
+            update_option( 'wcifr-short-description', $wcifr_short_description );
+
+            $wcifr_exclude_title = isset( $options['wcifr-exclude-title'] ) ? sanitize_text_field( $options['wcifr-exclude-title'] ) : 0;
+            update_option( 'wcifr-exclude-title', $wcifr_exclude_title );
+
+            $wcifr_esclude_description = isset( $options['wcifr-exclude-description'] ) ? sanitize_text_field( $options['wcifr-exclude-description'] ) : 0;
+            update_option( 'wcifr-exclude-description', $wcifr_esclude_description );
+
+            $wcifr_products_not_available = isset( $options['wcifr-products-not-available'] ) ? sanitize_text_field( $options['wcifr-products-not-available'] ) : 0;
+            update_option( 'wcifr-products-not-available', $wcifr_products_not_available );
+
         } else {
 
             update_option( 'wcifr-publish-new-products', 0 );
             update_option( 'wcifr-product-sku', 0 );
+            update_option( 'wcifr-short-description', 0 );
+            update_option( 'wcifr-exclude-title', 0 );
+            update_option( 'wcifr-exclude-description', 0 );
+            update_option( 'wcifr-products-not-available', 0);
 
         }
 
     }
+
+
+    /**
+     * Get the product id by sku
+     *
+     * @param string $sku the product sku.
+     *
+     * return int the prduct id
+     */
+    private function get_product_id_by_sku( $sku ) {
+
+        global $wpdb;
+
+        $product_id = $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_sku' AND meta_value = '%s'",
+                $sku
+            )
+        );
+
+        return $product_id;
+
+    }
+
+
+    /**
+     * Get the first sales account number of product group
+     *
+     * @param int $group_id the product group id.
+     *
+     * $return int the sales account number
+     */
+    private function get_sales_account_number( $group_id ) {
+
+        $response = $this->wcifr_call->call( 'get', 'product-groups/' . $group_id );
+
+        if ( isset( $response->salesAccountsList ) && is_array( $response->salesAccountsList ) ) {
+        
+            if ( isset( $response->salesAccountsList[0]->salesAccount->accountNumber ) ) {
+
+                return  $response->salesAccountsList[0]->salesAccount->accountNumber; 
+
+            }
+
+        }
+
+    }
+
+
+    /**
+     * Get the first sales account of product group
+     *
+     * @param int $group_id the product group id.
+     *
+     * $return int the sales account number
+     */
+    private function get_sales_account( $group_id ) {
+
+        $sales_account_number = $this->get_sales_account_number( $group_id );
+        $output               = $this->wcifr_call->call( 'get', 'accounts/' . $sales_account_number );
+
+        return $output;
+
+    }
+
+
+    /**
+     * Get the vat percentage applayed to the product
+     *
+     * @param int $group_id the product group id.
+     *
+     * $return int the vat percentage
+     */
+    private function get_vat_percentage( $group_id ) {
+
+        $sales_account = $this->get_sales_account( $group_id );
+
+        if ( isset( $sales_account->vatAccount->vatCode ) ) {
+
+            $response = $this->wcifr_call->call( 'get', 'vat-accounts/' . $sales_account->vatAccount->vatCode );
+
+            if ( isset( $response->ratePercentage ) ) {
+
+                return $response->ratePercentage;
+
+            }
+
+        }
+
+    }
+
+
+    /**
+     * Get all WC tax rates
+     *
+     * @return array
+     */
+    private function get_all_wc_tax_rates() {
+
+        $output      = array();
+        $tax_classes = WC_Tax::get_tax_classes();
+
+        if ( ! in_array( '', $tax_classes ) ) { 
+
+            array_unshift( $tax_classes, '' );
+
+        }
+
+        foreach ( $tax_classes as $tax_class ) {
+
+            $taxes  = WC_Tax::get_rates_for_tax_class( $tax_class );
+            $output = array_merge( $output, $taxes );
+        
+        }
+
+        return $output;
+
+    }
+
+
+    /**
+     * Get WC tax class by percentage rate
+     *
+     * @param int $vat_percentage the product vat percentage.
+     *
+     * @return string the tax class name 
+     */
+    private function get_wc_tax_class( $vat_percentage ) {
+    
+        $wc_tax_rates = $this->get_all_wc_tax_rates();
+
+        foreach ( $wc_tax_rates as $rate ) {
+
+            if ( isset( $rate->tax_rate ) && intval( $vat_percentage) === intval( $rate->tax_rate ) ) {
+
+                return $rate->tax_rate_class;
+
+            }
+
+        }
+
+    }
+
+
+	/**
+	 * Prepare the single product data for Reviso
+	 *
+	 * @param  string $product_data the Reviso product data json encoded.
+     *
+	 * @return array
+	 */
+	private function prepare_product_data( $product_data ) {
+
+        $data           = json_decode( $product_data );
+        $name           = isset( $data->name ) ? $data->name : null;
+        $description    = isset( $data->description ) ? $data->description : $name;
+        $product_number = isset( $data->productNumber ) ? $data->productNumber : null;
+        $get_price      = isset( $data->recommendedPrice ) ? wc_format_decimal( $data->recommendedPrice, 2 ) : 0;
+        $get_sell_price = isset( $data->salesPrice ) ? wc_format_decimal( $data->salesPrice, 2 ) : 0;
+
+        /* Tax */
+        if ( isset( $data->productGroup->productGroupNumber ) ) {
+
+            $vat_percentage = $this->get_vat_percentage( $data->productGroup->productGroupNumber ); 
+            $tax_class      = $this->get_wc_tax_class( $vat_percentage );
+
+        }
+
+        /* Prices incliding tax */
+        if ( $this->wc_prices_include_tax ) {
+
+            $price      = $get_price + wc_format_decimal( $get_price * ( $vat_percentage / 100  ), 2 );
+            $sell_price = $get_sell_price + wc_format_decimal( $get_sell_price * ( $vat_percentage / 100  ), 2 );
+
+        } else {
+
+            $price      = $get_price;
+            $sell_price = $get_sell_price;
+
+        }
+
+        /* Sku */
+        $sku = $product_number;
+
+        if ( isset( $data->barCode ) && $this->product_sku ) {
+
+            $sku = $data->barCode;
+
+        }
+
+        /* Stock */
+        $available_qty  = null;
+        $stock_status   = null;
+        $manage_stock   = 'no';
+        $total_sales    = null;
+
+        if ( isset( $data->inventory ) ) {
+
+            $available_qty = isset( $data->inventory->available ) ? $data->inventory->available : 0;
+            $stock_status  = 0 < $available_qty ? 'instock' : 'outofstock';
+            $manage_stock  = 'yes';
+            $total_sales   = isset( $data->inventory->orderedByCustomers ) ? $data->inventory->orderedByCustomers : null;
+
+        }
+
+        $args = array(
+            'post_type'    => 'product',
+            'post_status'  => $this->post_status,
+
+        );
+
+        /* Product ID */
+        $id = $this->get_product_id_by_sku( $sku );
+
+        if ( $id ) {
+
+            $args['ID'] = $id;
+
+            /* Update options */
+            if ( $this->exclude_title  ) {
+
+                $name = get_the_title( $id );
+
+            }
+
+            if ( $this->exclude_description  ) {
+
+                $description = get_post_field( 'post_content', $id );
+
+            }
+
+        } else {
+
+            if ( $this->products_not_available && 'outofstock' === $stock_status ) {
+
+                return;
+
+            }
+
+        }
+
+        $args['post_title']   = $name;
+        $args['post_content'] = $description;
+
+        /* Short description */
+		if ( $this->short_description ) {
+
+			$args['post_excerpt'] = $this->wcifr_get_short_description( $description );
+
+		}
+
+        /* Insert product */
+        $post_id = wp_insert_post( $args );
+
+        if ( ! is_wp_error( $post_id ) ) {
+
+            wp_set_object_terms( $post_id, 'simple', 'product_type' );
+
+            update_post_meta( $post_id, '_sku', $sku );
+            update_post_meta( $post_id, '_stock', $available_qty );
+            update_post_meta( $post_id, '_stock_status', $stock_status );
+            update_post_meta( $post_id, '_manage_stock', $manage_stock );
+            update_post_meta( $post_id, '_visibility', 'visible' );
+            update_post_meta( $post_id, '_regular_price', $price );
+            update_post_meta( $post_id, 'total_sales', $total_sales );
+
+            if ( $sell_price ) {
+
+                update_post_meta( $post_id, '_price', $sell_price );
+                update_post_meta( $post_id, '_sell_price', $sell_price );
+                update_post_meta( $post_id, '_sale_price', $sell_price );
+
+            } else {
+
+                update_post_meta( $post_id, '_price', $price );
+
+            }
+
+            /* Tax */
+            if ( isset( $data->productGroup->productGroupNumber ) ) {
+
+                if ( 0 === intval( $vat_percentage ) ) {
+
+                    update_post_meta( $post_id, '_tax_status', 'none' );
+                
+                } else {
+
+                    update_post_meta( $post_id, '_tax_status', 'taxable' );
+                    update_post_meta( $post_id, '_tax_class', $tax_class );
+
+                }
+
+            }
+
+
+        }
+
+	}
 
 
 	/**
@@ -306,7 +518,6 @@ class WCIFR_Products {
 
     	$temp_data = $this->temporary_data->get_data( $hash );
 		$data      = $this->prepare_product_data( $temp_data );
-
 
         /* Delete temporary data */
         $this->temporary_data->delete_data( $hash );
@@ -339,7 +550,7 @@ class WCIFR_Products {
 
 					$n++;
 
-                    if ( 2 === $n ) {
+                    if ( in_array( $n, array( 2,3,4 ) ) ) {
 
                         $hash = md5( json_encode( $data ) );
 
@@ -374,6 +585,8 @@ class WCIFR_Products {
 				);
 			
             }
+
+            echo json_encode( $response );
 
 		}
 
