@@ -47,8 +47,7 @@ function load_wc_importer_for_reviso() {
 	require_once( WCIFR_INCLUDES . 'class-wcifr-settings.php' );
 	require_once( WCIFR_INCLUDES . 'class-wcifr-users.php' );
 	require_once( WCIFR_INCLUDES . 'class-wcifr-products.php' );
-	require_once( WCIFR_INCLUDES . 'class-wcifr-orders.php' );
-	require_once( WCIFR_INCLUDES . 'wcifr-invoice.php' );
+
 }
 add_action( 'after_setup_theme', 'load_wc_importer_for_reviso', 1 );
 

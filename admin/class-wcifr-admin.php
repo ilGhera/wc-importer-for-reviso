@@ -120,7 +120,6 @@ class WCIFR_Admin {
 						echo '<a href="#" data-link="wcifr-suppliers" class="nav-tab" onclick="return false;">' . esc_html( __( 'Suppliers', 'wc-importer-for-reviso' ) ) . '</a>';
 						echo '<a href="#" data-link="wcifr-products" class="nav-tab" onclick="return false;">' . esc_html( __( 'Products', 'wc-importer-for-reviso' ) ) . '</a>';
 						echo '<a href="#" data-link="wcifr-customers" class="nav-tab" onclick="return false;">' . esc_html( __( 'Customers', 'wc-importer-for-reviso' ) ) . '</a>';
-						echo '<a href="#" data-link="wcifr-orders" class="nav-tab nav-tab-orders" onclick="return false;">' . esc_html( __( 'Orders', 'wc-importer-for-reviso' ) ) . '</a>';
 					echo '</h2>';
 
 					/*Settings*/
@@ -148,13 +147,6 @@ class WCIFR_Admin {
 					echo '<div id="wcifr-customers" class="wcifr-admin">';
 
 						include( WCIFR_ADMIN . 'wcifr-customers-template.php' );
-
-					echo '</div>';
-
-					/*Orders*/
-					echo '<div id="wcifr-orders" class="wcifr-admin">';
-
-						include( WCIFR_ADMIN . 'wcifr-orders-template.php' );
 
 					echo '</div>';
 
