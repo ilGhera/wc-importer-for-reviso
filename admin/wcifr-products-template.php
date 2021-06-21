@@ -29,34 +29,34 @@ $wcifr_products_not_available = get_option( 'wcifr-products-not-available');
 			</td>
 		</tr>
         <tr>
-            <th scope="row"><?php esc_html_e( 'Exclude product title', 'wcifr' ); ?></th>
+            <th scope="row"><?php esc_html_e( 'Exclude product title', 'wc-importer-for-reviso' ); ?></th>
             <td>
                 <input type="hidden" name="wcifr-exclude-title" value="0">
                 <input type="checkbox" name="wcifr-exclude-title" value="1"<?php echo $wcifr_exclude_title == 1 ? ' checked="checked"' : ''; ?>>
-                <p class="description"><?php esc_html_e( 'Exclude title from products updates.', 'wcifr' ); ?></p>
+                <p class="description"><?php esc_html_e( 'Exclude title from products updates', 'wc-importer-for-reviso' ); ?></p>
             </td>
         </tr>
 		<tr>
             <th scope="row"><?php esc_html_e( 'Short description', 'wc-importer-for-reviso' ); ?></th>
 			<td>
 				<input type="checkbox" class="wcifr-short-description" name="wcifr-short-description" value="1"<?php echo 1 == $wcifr_short_description ? ' checked="checked"' : ''; ?>>
-                <p class="description"><?php esc_html_e( 'Use the excerpt as short product description.', 'wc-importer-for-reviso' ); ?></p>
+                <p class="description"><?php esc_html_e( 'Use the excerpt as short product description', 'wc-importer-for-reviso' ); ?></p>
 			</td>
 		</tr>
         <tr>
-            <th scope="row"><?php esc_html_e( 'Exclude product description', 'wcifr' ); ?></th>
+            <th scope="row"><?php esc_html_e( 'Exclude product description', 'wc-importer-for-reviso' ); ?></th>
             <td>
                 <input type="hidden" name="wcifr-exclude-description" value="0">
                 <input type="checkbox" name="wcifr-exclude-description" value="1"<?php echo $wcifr_exclude_description == 1 ? ' checked="checked"' : ''; ?>>
-                <p class="description"><?php esc_html_e( 'Exclude descriptions from products updates.', 'wcifr' ); ?></p>
+                <p class="description"><?php esc_html_e( 'Exclude descriptions from products updates', 'wc-importer-for-reviso' ); ?></p>
             </td>
         </tr>
         <tr>
-            <th scope="row"><?php esc_html_e( 'Products not available', 'wcifr' ); ?></th>
+            <th scope="row"><?php esc_html_e( 'Products not available', 'wc-importer-for-reviso' ); ?></th>
             <td>
                 <input type="hidden" name="wcifr-products-not-available" value="0">
                 <input type="checkbox" name="wcifr-products-not-available" value="1"<?php echo $wcifr_products_not_available == 1 ? ' checked="checked"' : ''; ?>>
-                <p class="description"><?php esc_html_e( 'Avoid creating new products if not available in stock.', 'wcifr' ); ?></p>
+                <p class="description"><?php esc_html_e( 'Avoid creating new products if not available in stock', 'wc-importer-for-reviso' ); ?></p>
             </td>
         </tr>
 		<tr>
