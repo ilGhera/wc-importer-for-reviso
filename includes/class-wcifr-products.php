@@ -601,7 +601,7 @@ class WCIFR_Products {
 
 		if ( isset( $_POST['wcifr-import-products-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcifr-import-products-nonce'] ), 'wcifr-import-products' ) ) {
 
-			$options = isset( $_POST['options'] ) ? sanitize_text_field( wp_unslash( $_POST['options'] ) ) : null;
+			$options = isset( $_POST['options'] ) ? $_POST['options'] : null;
 
 			/* Save options */
 			$this->save_options( $options );
