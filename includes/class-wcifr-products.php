@@ -117,8 +117,6 @@ class WCIFR_Products {
 
 				if ( isset( $get_products->collection ) && ! empty( $get_products->collection ) ) {
 
-
-
 					$output->collection = array_merge( $output->collection, $get_products->collection );
 
 				} else {
@@ -222,12 +220,100 @@ class WCIFR_Products {
 
         $product_id = $wpdb->get_var(
             $wpdb->prepare(
-                "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_sku' AND meta_value = '%s'",
+                "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_sku' AND meta_value = %s",
                 $sku
             )
         );
 
         return $product_id;
+
+    }
+
+
+    /**
+     * Create a new WooCommerce Tax Class
+     *
+     * @param object $vat_account    the product vat account.
+     * @param string $tax_rate_class the tax rate class name.
+     *
+     * @return void
+     */
+    private function add_tax_rate( $vat_account, $tax_rate_class = '' ) {
+
+        $store_location = wc_get_base_location();
+        $country        = isset( $store_location['country'] ) ? $store_location['country'] : 'IT'; // Temp.
+
+        global $wpdb;
+
+        $response = $wpdb->insert(
+            $wpdb->prefix . 'woocommerce_tax_rates',
+            array(
+                'tax_rate_country'  => $country,
+                'tax_rate'          => number_format( $vat_account->ratePercentage, 4 ),
+                'tax_rate_name'     => $vat_account->vatCode,
+                'tax_rate_priority' => 1,
+                'tax_rate_shipping' => 0,
+                'tax_rate_class'    => $tax_rate_class,
+            ),
+            array(
+                '%s',
+                '%s',
+                '%s',
+                '%d',
+                '%d',
+                '%s',
+            )
+        );
+
+        if ( ! is_wp_error( $response ) ) {
+
+            return true;
+
+        }
+
+    }
+
+
+    /**
+     * Create a new WooCommerce Tax Class
+     *
+     * @param object $vat_account the product vat account.
+     *
+     * @return string the tax rate class name
+     */
+    private function add_tax_class( $vat_account ) {
+
+        /* Don't add standard rate tax class */
+        $class_name = 19 < intval( $vat_account->ratePercentage ) ? '' : $vat_account->vatCode;
+
+        if ( $class_name ) {
+
+            $tax_classes   = explode( "\n", get_option( 'woocommerce_tax_classes' ) );
+            $tax_classes[] = $class_name;
+
+            update_option( 'woocommerce_tax_classes', implode( "\n", $tax_classes ) );
+
+            global $wpdb;
+
+            $wpdb->insert(
+                $wpdb->prefix . 'wc_tax_rate_classes',
+                array(
+                    'name' => $class_name,
+                    'slug' => sanitize_title_with_dashes( $class_name ),
+                ),
+                array(
+                    '%s',
+                    '%s',
+                )
+            );
+
+        }
+
+        if ( $this->add_tax_rate( $vat_account, $class_name ) ) {
+
+            return $class_name;
+
+        }
 
     }
 
@@ -274,52 +360,37 @@ class WCIFR_Products {
 
 
     /**
-     * Get the vat percentage applayed to the product
+     * Get WC tax class by percentage rate
      *
-     * @param int $group_id the product group id.
+     * @param object $vat_account the product vat account.
      *
-     * $return int the vat percentage
+     * @return string the tax class name 
      */
-    private function get_vat_percentage( $group_id ) {
+    private function get_wc_tax_class( $vat_account ) {
+    
+        global $wpdb;
 
-        $sales_account = $this->get_sales_account( $group_id );
+        $output        = null;
+        $tax_rate_name = 19 < intval( $vat_account->ratePercentage ) ? '' : $vat_account->vatCode;
+        $tax_rate      = number_format( $vat_account->ratePercentage, 4 );
+        $and           = $tax_rate_name ? ' AND tax_rate_name = %s' : null;
+        $values        = $and ? array( $tax_rate, $tax_rate_name ) : $tax_rate;
 
-        if ( isset( $sales_account->vatAccount->vatCode ) ) {
-
-            $response = $this->wcifr_call->call( 'get', 'vat-accounts/' . $sales_account->vatAccount->vatCode );
-
-            if ( isset( $response->ratePercentage ) ) {
-
-                return $response->ratePercentage;
-
-            }
-
-        }
-
-    }
-
-
-    /**
-     * Get all WC tax rates
-     *
-     * @return array
-     */
-    private function get_all_wc_tax_rates() {
-
-        $output      = array();
-        $tax_classes = WC_Tax::get_tax_classes();
-
-        if ( ! in_array( '', $tax_classes ) ) { 
-
-            array_unshift( $tax_classes, '' );
-
-        }
-
-        foreach ( $tax_classes as $tax_class ) {
-
-            $taxes  = WC_Tax::get_rates_for_tax_class( $tax_class );
-            $output = array_merge( $output, $taxes );
+        $result = $wpdb->get_row(
+            $wpdb->prepare(
+                "SELECT * FROM " . $wpdb->prefix . "woocommerce_tax_rates WHERE tax_rate = %f" . $and,
+                $values
+            )
+        );
         
+        if ( ! $result ) {
+
+            $output = $this->add_tax_class( $vat_account );
+
+        } else {
+
+            $output = isset( $result->tax_rate_name ) ? $result->tax_rate_name : null;
+
         }
 
         return $output;
@@ -328,21 +399,23 @@ class WCIFR_Products {
 
 
     /**
-     * Get WC tax class by percentage rate
+     * Get the Reviso vat account applayed to the product
      *
-     * @param int $vat_percentage the product vat percentage.
+     * @param int $group_id the product group id.
      *
-     * @return string the tax class name 
+     * $return object the vat account
      */
-    private function get_wc_tax_class( $vat_percentage ) {
-    
-        $wc_tax_rates = $this->get_all_wc_tax_rates();
+    private function get_vat_account( $group_id ) {
 
-        foreach ( $wc_tax_rates as $rate ) {
+        $sales_account = $this->get_sales_account( $group_id );
 
-            if ( isset( $rate->tax_rate ) && intval( $vat_percentage) === intval( $rate->tax_rate ) ) {
+        if ( isset( $sales_account->vatAccount->vatCode ) ) {
 
-                return $rate->tax_rate_class;
+            $response = $this->wcifr_call->call( 'get', 'vat-accounts/' . $sales_account->vatAccount->vatCode );
+
+            if ( ! is_wp_error( $response ) ) {
+
+                return $response;
 
             }
 
@@ -370,8 +443,15 @@ class WCIFR_Products {
         /* Tax */
         if ( isset( $data->productGroup->productGroupNumber ) ) {
 
-            $vat_percentage = $this->get_vat_percentage( $data->productGroup->productGroupNumber ); 
-            $tax_class      = $this->get_wc_tax_class( $vat_percentage );
+            $vat_account    = $this->get_vat_account( $data->productGroup->productGroupNumber ); 
+            $vat_percentage = 0;
+
+            if ( is_object( $vat_account ) ) {
+
+                $vat_percentage = isset( $vat_account->ratePercentage ) ? $vat_account->ratePercentage : 0; 
+                $tax_class      = $this->get_wc_tax_class( $vat_account );
+
+            }
 
         }
 
