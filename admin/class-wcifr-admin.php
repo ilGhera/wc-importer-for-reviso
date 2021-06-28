@@ -35,10 +35,6 @@ class WCIFR_Admin {
 			/*css*/
 			wp_enqueue_style( 'bootstrap-iso', plugin_dir_url( __DIR__ ) . 'css/bootstrap-iso.css' );
 
-		} elseif ( 'edit-shop_order' === $screen->id ) {
-
-			wp_enqueue_script( 'wcifr-js', WCIFR_URI . 'js/wcifr-shop-orders.js', array( 'jquery' ), '1.0', true );
-
 		}
 
 		wp_enqueue_style( 'wcifr-style', WCIFR_URI . 'css/wc-importer-for-reviso.css' );
@@ -92,26 +88,6 @@ class WCIFR_Admin {
 
 					/*Header*/
 					echo '<h1 class="wcifr main">' . esc_html( __( 'WooCommerce Importer for Reviso - Premium', 'wc-importer-for-reviso' ) ) . '</h1>';
-
-					/*Plugin premium key*/
-					$key = sanitize_text_field( get_option( 'wcifr-premium-key' ) );
-
-					if ( isset( $_POST['wcifr-premium-key'], $_POST['wcifr-premium-key-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcifr-premium-key-nonce'] ), 'wcifr-premium-key' ) ) {
-
-						$key = sanitize_text_field( wp_unslash( $_POST['wcifr-premium-key'] ) );
-
-						update_option( 'wcifr-premium-key', $key );
-
-					}
-
-					/*Premium Key Form*/
-					echo '<form id="wcifr-premium-key" method="post" action="">';
-					echo '<label>' . esc_html( __( 'Premium Key', 'wc-importer-for-reviso' ) ) . '</label>';
-					echo '<input type="text" class="regular-text code" name="wcifr-premium-key" id="wcifr-premium-key" placeholder="' . esc_html( __( 'Add your Premium Key', 'wc-importer-for-reviso' ) ) . '" value="' . esc_attr( $key ) . '" />';
-					echo '<p class="description">' . esc_html( __( 'Add your Premium Key and keep update your copy of Woocommerce Importer for Reviso - Premium', 'wc-importer-for-reviso' ) ) . '</p>';
-					wp_nonce_field( 'wcifr-premium-key', 'wcifr-premium-key-nonce' );
-					echo '<input type="submit" class="button button-primary" value="' . esc_html( __( 'Save', 'wc-importer-for-reviso' ) ) . '" />';
-					echo '</form>';
 
 					/*Plugin options menu*/
 					echo '<div class="icon32 icon32-woocommerce-settings" id="icon-woocommerce"><br /></div>';

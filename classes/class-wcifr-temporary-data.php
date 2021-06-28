@@ -41,30 +41,12 @@ class WCIFR_Temporary_Data {
 		global $wpdb;
 
 		$temporary_users_data    = $wpdb->prefix . 'wcifr_users_temporary_data';
-		$temporary_products_data = $wpdb->prefix . 'wcifr_products_temporary_data';
 
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '$temporary_users_data'" ) != $temporary_users_data ) {
 
 			$charset_collate = $wpdb->get_charset_collate();
 
 			$sql = "CREATE TABLE $temporary_users_data (
-				id 			bigint(20) NOT NULL AUTO_INCREMENT,
-				hash        varchar(255) NOT NULL,
-				data 		longtext NOT NULL,
-				UNIQUE KEY id (id)
-			) $charset_collate;";
-
-			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-
-			dbDelta( $sql );
-
-		}
-
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '$temporary_products_data'" ) != $temporary_products_data ) {
-
-			$charset_collate = $wpdb->get_charset_collate();
-
-			$sql = "CREATE TABLE $temporary_products_data (
 				id 			bigint(20) NOT NULL AUTO_INCREMENT,
 				hash        varchar(255) NOT NULL,
 				data 		longtext NOT NULL,
@@ -87,7 +69,7 @@ class WCIFR_Temporary_Data {
      */
     private function table_name() {
 
-        $output = 'users' === $this->type ? 'wcifr_users_temporary_data' : 'wcifr_products_temporary_data';
+        $output = 'wcifr_users_temporary_data';
 
         return $output;
 

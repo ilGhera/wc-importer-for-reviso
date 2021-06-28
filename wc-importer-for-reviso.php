@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: WC Importer for Reviso - Premium
+ * Plugin Name: WC Importer for Reviso
  * Plugin URI: https://www.ilghera.com/product/woocommerce-importer-for-reviso-premium
  * Description: Connect your store to Reviso and import orders, products, customers and suppliers.
  * Author: ilGhera
@@ -46,7 +46,6 @@ function load_wc_importer_for_reviso() {
 	require_once( WCIFR_INCLUDES . 'class-wcifr-call.php' );
 	require_once( WCIFR_INCLUDES . 'class-wcifr-settings.php' );
 	require_once( WCIFR_INCLUDES . 'class-wcifr-users.php' );
-	require_once( WCIFR_INCLUDES . 'class-wcifr-products.php' );
 
 }
 add_action( 'after_setup_theme', 'load_wc_importer_for_reviso', 1 );
