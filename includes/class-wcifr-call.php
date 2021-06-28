@@ -74,7 +74,7 @@ class WCIFR_Call {
 
 		if ( ! is_wp_error( $response ) && isset( $response['body'] ) ) {
 
-			$output = $decode ? wp_json_decode( $response['body'] ) : $response['body'];
+			$output = $decode ? json_decode( $response['body'] ) : $response['body'];
 
 			return $output;
 
