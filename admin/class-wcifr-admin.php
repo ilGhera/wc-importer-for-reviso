@@ -33,11 +33,11 @@ class WCIFR_Admin {
 			wp_enqueue_script( 'wcifr-js', WCIFR_URI . 'js/wcifr.js', array( 'jquery' ), '1.0', true );
 
 			/*css*/
-			wp_enqueue_style( 'bootstrap-iso', plugin_dir_url( __DIR__ ) . 'css/bootstrap-iso.css' );
+			wp_enqueue_style( 'bootstrap-iso', plugin_dir_url( __DIR__ ) . 'css/bootstrap-iso.css', array(), '1.0' );
 
 		}
 
-		wp_enqueue_style( 'wcifr-style', WCIFR_URI . 'css/wc-importer-for-reviso.css' );
+		wp_enqueue_style( 'wcifr-style', WCIFR_URI . 'css/wc-importer-for-reviso.css', array(), '1.0' );
 
 	}
 
@@ -74,15 +74,15 @@ class WCIFR_Admin {
 		echo '<div class="wrap">';
 			echo '<div class="wrap-left">';
 
-				/*Check if WooCommerce is installed ancd activated*/
-				if ( ! class_exists( 'WooCommerce' ) ) {
-					echo '<div id="message" class="error">';
-						echo '<p>';
-							echo '<strong>' . esc_html( __( 'ATTENTION! It seems like Woocommerce is not installed', 'wc-importer-for-reviso' ) ) . '</strong>';
-						echo '</p>';
-					echo '</div>';
-					exit;
-				}
+		/*Check if WooCommerce is installed ancd activated*/
+		if ( ! class_exists( 'WooCommerce' ) ) {
+			echo '<div id="message" class="error">';
+				echo '<p>';
+					echo '<strong>' . esc_html( __( 'ATTENTION! It seems like Woocommerce is not installed', 'wc-importer-for-reviso' ) ) . '</strong>';
+				echo '</p>';
+			echo '</div>';
+			exit;
+		}
 
 				echo '<div id="wcifr-generale">';
 
@@ -101,28 +101,28 @@ class WCIFR_Admin {
 					/*Settings*/
 					echo '<div id="wcifr-settings" class="wcifr-admin" style="display: block;">';
 
-						include( WCIFR_ADMIN . 'wcifr-settings-template.php' );
+						include WCIFR_ADMIN . 'wcifr-settings-template.php';
 
 					echo '</div>';
 
 					/*Suppliers*/
 					echo '<div id="wcifr-suppliers" class="wcifr-admin">';
 
-						include( WCIFR_ADMIN . 'wcifr-suppliers-template.php' );
+						include WCIFR_ADMIN . 'wcifr-suppliers-template.php';
 
 					echo '</div>';
 
 					/*Products*/
 					echo '<div id="wcifr-products" class="wcifr-admin">';
 
-						include( WCIFR_ADMIN . 'wcifr-products-template.php' );
+						include WCIFR_ADMIN . 'wcifr-products-template.php';
 
 					echo '</div>';
 
 					/*Customers*/
 					echo '<div id="wcifr-customers" class="wcifr-admin">';
 
-						include( WCIFR_ADMIN . 'wcifr-customers-template.php' );
+						include WCIFR_ADMIN . 'wcifr-customers-template.php';
 
 					echo '</div>';
 

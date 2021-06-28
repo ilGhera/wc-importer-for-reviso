@@ -16,25 +16,24 @@
  */
 function wcifr_avoid_length_exceed( $text, $limit ) {
 
-    $output = $text;
+	$output = $text;
 
-    if ( strlen( $text ) > $limit ) {
+	if ( strlen( $text ) > $limit ) {
 
-        if ( 25 === intval( $limit ) ) {
+		if ( 25 === intval( $limit ) ) {
 
-            /*Product number (sku)*/
-            $output = substr( $text, 0, $limit );
+			/*Product number (sku)*/
+			$output = substr( $text, 0, $limit );
 
-        } else {
+		} else {
 
-            /*Product name and description*/
-            $output = substr( $text, 0, ( $limit - 4 ) ) . ' ...';
+			/*Product name and description*/
+			$output = substr( $text, 0, ( $limit - 4 ) ) . ' ...';
 
-        }
+		}
+	}
 
-    }
-
-    return $output;
+	return $output;
 
 }
 
@@ -47,19 +46,18 @@ function wcifr_avoid_length_exceed( $text, $limit ) {
  */
 function wcifr_sanitize_array( $array ) {
 
-    $output = array();
+	$output = array();
 
-    if ( is_array( $array ) && ! empty( $array ) ) {
+	if ( is_array( $array ) && ! empty( $array ) ) {
 
-        foreach ( $array as $key => $value ) {
+		foreach ( $array as $key => $value ) {
 
-            $output[ $key ] = sanitize_text_field( wp_unslash( $value ) );
+			$output[ $key ] = sanitize_text_field( wp_unslash( $value ) );
 
-        }
+		}
+	}
 
-    }
-
-    return $output;
+	return $output;
 
 }
 
@@ -67,14 +65,14 @@ function wcifr_sanitize_array( $array ) {
 /**
  * Go Premium button
  *
- * @return void 
+ * @return void
  */
 function wcifr_go_premium() {
 
-	$title = __( 'This is a premium functionality, click here for more information', 'wc-importer-for-reviso' );
-	$output = '<span class="wcifr label label-warning premium">';
+	$title       = __( 'This is a premium functionality, click here for more information', 'wc-importer-for-reviso' );
+	$output      = '<span class="wcifr label label-warning premium">';
 		$output .= '<a href="https://www.ilghera.com/product/woocommerce-importer-for-reviso-premium" target="_blank" title="' . esc_attr( $title ) . '">Premium</a>';
-	$output .= '</span>';
+	$output     .= '</span>';
 
 	$allowed = array(
 		'span' => array(

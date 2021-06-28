@@ -34,7 +34,7 @@
 			</td>
 		</tr>
 	</table>
-	
+
 	<p class="submit">
 		<input type="submit" name="download_csv" class="button-primary wcifr import-users customers" value="<?php esc_html_e( 'Import from Reviso', 'wc-importer-for-reviso' ); ?>" />
 	</p>

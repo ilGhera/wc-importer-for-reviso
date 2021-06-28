@@ -49,8 +49,8 @@ wp_localize_script(
 	'wcifr-js',
 	'wcifrUsers',
 	array(
-        'importNonce'             => $import_users_nonce,
-        'selectedSuppliersGroups' => json_encode( get_option( 'wcifr-suppliers-groups' ) ),
+		'importNonce'             => $import_users_nonce,
+		'selectedSuppliersGroups' => wp_json_encode( get_option( 'wcifr-suppliers-groups' ) ),
 	)
 );
 

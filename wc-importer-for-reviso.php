@@ -5,7 +5,7 @@
  * Description: Connect your store to Reviso and import orders, products, customers and suppliers.
  * Author: ilGhera
  * Version: 0.9.0
- * 
+ *
  * Author URI: https://ilghera.com
  * Requires at least: 4.0
  * Tested up to: 5.7
@@ -22,7 +22,7 @@ function load_wc_importer_for_reviso() {
 
 	/*Function check */
 	if ( ! function_exists( 'is_plugin_active' ) ) {
-		require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
+		require_once ABSPATH . '/wp-admin/includes/plugin.php';
 	}
 
 	/*Internationalization*/
@@ -39,13 +39,13 @@ function load_wc_importer_for_reviso() {
 	define( 'WCIFR_SETTINGS', admin_url( 'admin.php?page=wc-importer-for-reviso' ) );
 
 	/*Files required*/
-	require_once( WCIFR_DIR . 'libraries/action-scheduler/action-scheduler.php' );
-	require_once( WCIFR_ADMIN . 'class-wcifr-admin.php' );
-	require_once( WCIFR_CLASSES . 'class-wcifr-temporary-data.php' );
-	require_once( WCIFR_INCLUDES . 'wcifr-functions.php' );
-	require_once( WCIFR_INCLUDES . 'class-wcifr-call.php' );
-	require_once( WCIFR_INCLUDES . 'class-wcifr-settings.php' );
-	require_once( WCIFR_INCLUDES . 'class-wcifr-users.php' );
+	require_once WCIFR_DIR . 'libraries/action-scheduler/action-scheduler.php';
+	require_once WCIFR_ADMIN . 'class-wcifr-admin.php';
+	require_once WCIFR_CLASSES . 'class-wcifr-temporary-data.php';
+	require_once WCIFR_INCLUDES . 'wcifr-functions.php';
+	require_once WCIFR_INCLUDES . 'class-wcifr-call.php';
+	require_once WCIFR_INCLUDES . 'class-wcifr-settings.php';
+	require_once WCIFR_INCLUDES . 'class-wcifr-users.php';
 
 }
 add_action( 'after_setup_theme', 'load_wc_importer_for_reviso', 1 );

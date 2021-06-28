@@ -14,9 +14,9 @@ class WCIFR_Temporary_Data {
 	 * The constructor
 	 *
 	 * @param boolean $init true per eseguire hooks iniziali.
-     * @param  string $type users or products.
-     *
-     * @return void
+	 * @param  string  $type users or products.
+	 *
+	 * @return void
 	 */
 	public function __construct( $init = false, $type = false ) {
 
@@ -24,15 +24,15 @@ class WCIFR_Temporary_Data {
 
 			$this->db_tables();
 
-        }
+		}
 
-        $this->type = $type;
+		$this->type = $type;
 
 	}
 
 
 	/**
-	 * Create the db table 
+	 * Create the db table
 	 *
 	 * @return void
 	 */
@@ -40,7 +40,7 @@ class WCIFR_Temporary_Data {
 
 		global $wpdb;
 
-		$temporary_users_data    = $wpdb->prefix . 'wcifr_users_temporary_data';
+		$temporary_users_data = $wpdb->prefix . 'wcifr_users_temporary_data';
 
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '$temporary_users_data'" ) != $temporary_users_data ) {
 
@@ -53,39 +53,39 @@ class WCIFR_Temporary_Data {
 				UNIQUE KEY id (id)
 			) $charset_collate;";
 
-			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+			require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 			dbDelta( $sql );
 
 		}
 
-    }
+	}
 
 
-    /**
-     * The DB table name
-     *
-     * @return string
-     */
-    private function table_name() {
+	/**
+	 * The DB table name
+	 *
+	 * @return string
+	 */
+	private function table_name() {
 
-        $output = 'wcifr_users_temporary_data';
+		$output = 'wcifr_users_temporary_data';
 
-        return $output;
+		return $output;
 
-    }
+	}
 
 
 	/**
 	 * Get data from the table
 	 *
-	 * @param  string $hash the hash code of the specific data. 
-     *
+	 * @param  string $hash the hash code of the specific data.
+	 *
 	 * @return array
 	 */
 	public function get_data( $hash ) {
 
-        global $wpdb;
+		global $wpdb;
 
 		$query = 'SELECT * FROM ' . $wpdb->prefix . $this->table_name() . " WHERE hash = '$hash'";
 
@@ -103,9 +103,9 @@ class WCIFR_Temporary_Data {
 	/**
 	 * Add temporary data to the table
 	 *
-	 * @param  string $hash the hash code of the specific data. 
+	 * @param  string $hash the hash code of the specific data.
 	 * @param  string $data the data.
-     *
+	 *
 	 * @return void
 	 */
 	public function add_data( $hash, $data ) {
@@ -134,10 +134,10 @@ class WCIFR_Temporary_Data {
 
 
 	/**
-	 * Delete record from the table 
+	 * Delete record from the table
 	 *
-	 * @param  string $hash the hash code of the specific data. 
-     *
+	 * @param  string $hash the hash code of the specific data.
+	 *
 	 * @return void
 	 */
 	public function delete_data( $hash ) {

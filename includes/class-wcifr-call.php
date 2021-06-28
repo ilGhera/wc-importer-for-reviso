@@ -58,10 +58,10 @@ class WCIFR_Call {
 	 */
 	public function call( $method, $endpoint = '', $args = null, $decode = true ) {
 
-        ini_set( 'serialize_precision', -1 );
+		ini_set( 'serialize_precision', -1 );
 
-		$body = $args ? json_encode( $args ) : '';
-        
+		$body = $args ? wp_json_encode( $args ) : '';
+
 		$response = wp_remote_request(
 			$this->base_url . $endpoint,
 			array(
@@ -74,7 +74,7 @@ class WCIFR_Call {
 
 		if ( ! is_wp_error( $response ) && isset( $response['body'] ) ) {
 
-			$output = $decode ? json_decode( $response['body'] ) : $response['body'];
+			$output = $decode ? wp_json_decode( $response['body'] ) : $response['body'];
 
 			return $output;
 
