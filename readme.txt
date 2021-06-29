@@ -1,4 +1,4 @@
-=== WooCommerce Importer for Reviso ===
+=== Import Reviso for WooCommerce ===
 Contributors: ghera74
 Tags: Reviso, Contabilità in Cloud, Team System, Danea Easyfatt, Fatturazione, Invoice
 Version: 0.9.0
