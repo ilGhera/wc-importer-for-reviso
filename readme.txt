@@ -5,6 +5,7 @@ Version: 0.9.0
 Requires at least: 4.0
 Tested up to: 5.7
 License: GPLv2
+Stable tag: 0.9.0
 
 Import suppliers, products, customers and orders from Reviso to your Woocommerce store. 
 
