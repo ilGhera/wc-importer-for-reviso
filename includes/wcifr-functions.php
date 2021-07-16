@@ -112,7 +112,7 @@ function wcifr_update_message( $plugin_data, $response ) {
 
 	if ( ! $key ) {
 
-		$message = 'A <b>Premium Key</b> is required for keeping this plugin up to date. Please, add yours in the <a href="' . WCIFR_SETTINGS . '">options page</a> or click <a href="https://www.ilghera.com/product/wc-importer-for-reviso-premium/" target="_blank">here</a> for prices and details.';
+		$message = 'A <b>Premium Key</b> is required for keeping this plugin up to date. Please, add yours in the <a href="' . WCIFR_SETTINGS . '">options page</a> or click <a href="https://www.ilghera.com/product/woocommerce-importer-for-reviso-premium/" target="_blank">here</a> for prices and details.';
 
 	} else {
 
@@ -123,11 +123,11 @@ function wcifr_update_message( $plugin_data, $response ) {
 
 		if ( $limit < $now ) {
 
-			$message = 'It seems like your <strong>Premium Key</strong> is expired. Please, click <a href="https://www.ilghera.com/product/wc-importer-for-reviso-premium/" target="_blank">here</a> for prices and details.';
+			$message = 'It seems like your <strong>Premium Key</strong> is expired. Please, click <a href="https://www.ilghera.com/product/woocommerce-importer-for-reviso-premium/" target="_blank">here</a> for prices and details.';
 
 		} elseif ( '9055' !== $decoded_key[2] ) {
 
-			$message = 'It seems like your <strong>Premium Key</strong> is not valid. Please, click <a href="https://www.ilghera.com/product/wc-importer-for-reviso-premium/" target="_blank">here</a> for prices and details.';
+			$message = 'It seems like your <strong>Premium Key</strong> is not valid. Please, click <a href="https://www.ilghera.com/product/woocommerce-importer-for-reviso-premium/" target="_blank">here</a> for prices and details.';
 
 		}
 
