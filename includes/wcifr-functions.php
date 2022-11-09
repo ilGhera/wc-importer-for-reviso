@@ -4,7 +4,7 @@
  *
  * @author ilGhera
  * @package wc-importer-for-reviso/includes
- * @since 0.9.0
+ * @since 0.9.1
  */
 
 /**
@@ -68,8 +68,9 @@ function wcifr_sanitize_array( $array ) {
  * Update checker
  */
 require( WCIFR_DIR . 'plugin-update-checker/plugin-update-checker.php' );
+use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
-$wcifr_update_checker = Puc_v4_Factory::buildUpdateChecker(
+$wcifr_update_checker = PucFactory::buildUpdateChecker(
 	'https://www.ilghera.com/wp-update-server-2/?action=get_metadata&slug=wc-importer-for-reviso-premium',
 	WCIFR_FILE,
 	'wc-importer-for-reviso-premium'
