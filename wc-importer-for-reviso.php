@@ -4,12 +4,12 @@
  * Plugin URI: https://www.ilghera.com/product/woocommerce-importer-for-reviso-premium
  * Description: Connect your store to Reviso and import orders, products, customers and suppliers.
  * Author: ilGhera
- * Version: 0.9.0
+ * Version: 0.9.1
  * 
  * Author URI: https://ilghera.com
  * Requires at least: 4.0
- * Tested up to: 5.7
- * WC tested up to: 5
+ * Tested up to: 6.1
+ * WC tested up to: 7
  * Text Domain: wc-importer-for-reviso
  */
 

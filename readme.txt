@@ -1,9 +1,9 @@
 === WooCommerce Importer for Reviso - Premium ===
 Contributors: ghera74
 Tags: Reviso, Contabilità in Cloud, Team System, Danea Easyfatt, Fatturazione, Invoice
-Version: 0.9.0
+Version: 0.9.1
 Requires at least: 4.0
-Tested up to: 5.7
+Tested up to: 6.1
 License: GPLv2
 
 Import suppliers, products, customers and orders from Reviso to your Woocommerce store. 
@@ -48,6 +48,14 @@ This plugin sends data to an external service, like the products bought by the u
 
 
 == Changelog ==
+
+= 0.9.1 = 
+Release Date: 9 November 2022
+
+* Enhancement: WordPress 6.1 support 
+* Enhancement: PUC v5 support
+* Update: Plugin Update Checker
+
 
 = 0.9.0 = 
 Release Date: 24 June 2021
