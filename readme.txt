@@ -55,6 +55,7 @@ Release Date: 9 November 2022
 * Enhancement: WordPress 6.1 support 
 * Enhancement: PUC v5 support
 * Update: Plugin Update Checker
+* Update: Action Scheduler 
 
 
 = 0.9.0 = 
