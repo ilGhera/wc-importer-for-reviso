@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WC Exporter for Reviso\n"
-"POT-Creation-Date: 2022-12-22 15:03+0100\n"
+"POT-Creation-Date: 2022-12-22 15:22+0100\n"
 "PO-Revision-Date: 2016-05-26 13:25+0200\n"
 "Last-Translator: ilGhera <info@ilghera.com>\n"
 "Language-Team: ilGhera <info@ilghera.com>\n"
@@ -20,49 +20,35 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-1: libraries\n"
 "X-Poedit-SearchPathExcluded-2: vendor\n"
 
-#: admin/class-wcifr-admin.php:73
+#: admin/class-wcifr-admin.php:52
+msgid "WC Importer for Reviso"
+msgstr ""
+
+#: admin/class-wcifr-admin.php:69
 msgid "It seems like you don't have permission to see this page"
 msgstr ""
 
-#: admin/class-wcifr-admin.php:85
+#: admin/class-wcifr-admin.php:81
 msgid "ATTENTION! It seems like Woocommerce is not installed"
 msgstr ""
 
-#: admin/class-wcifr-admin.php:94
-msgid "WooCommerce Importer for Reviso - Premium"
+#: admin/class-wcifr-admin.php:90
+msgid "WooCommerce Importer for Reviso"
 msgstr ""
 
-#: admin/class-wcifr-admin.php:109
-msgid "Premium Key"
-msgstr ""
-
-#: admin/class-wcifr-admin.php:110
-msgid "Add your Premium Key"
-msgstr ""
-
-#: admin/class-wcifr-admin.php:111
-msgid ""
-"Add your Premium Key and keep update your copy of Woocommerce Importer for "
-"Reviso - Premium"
-msgstr ""
-
-#: admin/class-wcifr-admin.php:113
-msgid "Save"
-msgstr ""
-
-#: admin/class-wcifr-admin.php:119
+#: admin/class-wcifr-admin.php:95
 msgid "Settings"
 msgstr ""
 
-#: admin/class-wcifr-admin.php:120
+#: admin/class-wcifr-admin.php:96
 msgid "Suppliers"
 msgstr ""
 
-#: admin/class-wcifr-admin.php:121
+#: admin/class-wcifr-admin.php:97
 msgid "Products"
 msgstr ""
 
-#: admin/class-wcifr-admin.php:122
+#: admin/class-wcifr-admin.php:98
 msgid "Customers"
 msgstr ""
 
@@ -74,56 +60,56 @@ msgstr ""
 msgid "Select your customers user role"
 msgstr ""
 
-#: admin/wcifr-customers-template.php:39 admin/wcifr-products-template.php:71
+#: admin/wcifr-customers-template.php:39 admin/wcifr-products-template.php:65
 #: admin/wcifr-suppliers-template.php:39
 msgid "Import from Reviso"
 msgstr ""
 
-#: admin/wcifr-products-template.php:25
+#: admin/wcifr-products-template.php:17
 msgid "Product sku"
 msgstr ""
 
-#: admin/wcifr-products-template.php:28
+#: admin/wcifr-products-template.php:20
 msgid "Use <i>Bar Code instead</i> of <i>Product Number</i> if available"
 msgstr ""
 
-#: admin/wcifr-products-template.php:32
+#: admin/wcifr-products-template.php:24
 msgid "Exclude product title"
 msgstr ""
 
-#: admin/wcifr-products-template.php:36
+#: admin/wcifr-products-template.php:28
 msgid "Exclude title from products updates"
 msgstr ""
 
-#: admin/wcifr-products-template.php:40
+#: admin/wcifr-products-template.php:32
 msgid "Short description"
 msgstr ""
 
-#: admin/wcifr-products-template.php:43
+#: admin/wcifr-products-template.php:35
 msgid "Use the excerpt as short product description"
 msgstr ""
 
-#: admin/wcifr-products-template.php:47
+#: admin/wcifr-products-template.php:39
 msgid "Exclude product description"
 msgstr ""
 
-#: admin/wcifr-products-template.php:51
+#: admin/wcifr-products-template.php:43
 msgid "Exclude descriptions from products updates"
 msgstr ""
 
-#: admin/wcifr-products-template.php:55
+#: admin/wcifr-products-template.php:47
 msgid "Products not available"
 msgstr ""
 
-#: admin/wcifr-products-template.php:59
+#: admin/wcifr-products-template.php:51
 msgid "Avoid creating new products if not available in stock"
 msgstr ""
 
-#: admin/wcifr-products-template.php:63
+#: admin/wcifr-products-template.php:55
 msgid "Publish new products"
 msgstr ""
 
-#: admin/wcifr-products-template.php:66
+#: admin/wcifr-products-template.php:58
 msgid "Publish new products directly"
 msgstr ""
 
@@ -151,20 +137,15 @@ msgstr ""
 msgid "Select your suppliers user role"
 msgstr ""
 
-#: includes/class-wcifr-products.php:639
-#, php-format
-msgid "%d product(s) import process has begun"
-msgstr ""
-
-#: includes/class-wcifr-products.php:646
-msgid "ERROR! There are not products to import"
-msgstr ""
-
 #: includes/class-wcifr-settings.php:120
 msgid "Connected"
 msgstr ""
 
-#: includes/class-wcifr-users.php:282
+#: includes/class-wcifr-users.php:275
 #, php-format
 msgid "%1$d %2$s(s) import process has begun"
+msgstr ""
+
+#: includes/wcifr-functions.php:72
+msgid "This is a premium functionality, click here for more information"
 msgstr ""

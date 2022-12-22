@@ -87,7 +87,7 @@ class WCIFR_Admin {
 				echo '<div id="wcifr-generale">';
 
 					/*Header*/
-					echo '<h1 class="wcifr main">' . esc_html( __( 'WooCommerce Importer for Reviso - Premium', 'wc-importer-for-reviso' ) ) . '</h1>';
+					echo '<h1 class="wcifr main">' . esc_html( __( 'WooCommerce Importer for Reviso', 'wc-importer-for-reviso' ) ) . '</h1>';
 
 					/*Plugin options menu*/
 					echo '<div class="icon32 icon32-woocommerce-settings" id="icon-woocommerce"><br /></div>';
