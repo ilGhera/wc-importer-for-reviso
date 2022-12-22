@@ -1,17 +1,17 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-06-21 16:53+0200\n"
-"PO-Revision-Date: 2021-06-21 16:54+0200\n"
+"POT-Creation-Date: 2022-12-22 15:01+0100\n"
+"PO-Revision-Date: 2022-12-22 15:03+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it_IT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.2\n"
-"X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.1.1\n"
+"X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: _;__;_e;esc_html__;esc_html_e;esc_attr__;esc_attr_e\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: plugin-update-checker\n"
@@ -44,8 +44,8 @@ msgid ""
 "Add your Premium Key and keep update your copy of Woocommerce Importer for "
 "Reviso - Premium"
 msgstr ""
-"Aggiungi la tua Premium Key e mantieni aggiornato WooCommerce Importer for "
-"Reviso - Premium"
+"Aggiungi la tua Premium Key e mantieni aggiornato WC Importer for "
+"Contabilità in Cloud - Premium"
 
 #: admin/class-wcifr-admin.php:113
 msgid "Save"
@@ -78,7 +78,7 @@ msgstr "Seleziona il ruolo utente usato per i clienti"
 #: admin/wcifr-customers-template.php:39 admin/wcifr-products-template.php:71
 #: admin/wcifr-suppliers-template.php:39
 msgid "Import from Reviso"
-msgstr "Importa da Reviso"
+msgstr "Importa da Contabilità in Cloud"
 
 #: admin/wcifr-products-template.php:25
 msgid "Product sku"
@@ -138,26 +138,26 @@ msgstr "Non connesso"
 
 #: admin/wcifr-settings-template.php:24
 msgid "Connect with your Reviso credentials"
-msgstr "Connettiti a Reviso con le tue credenziali"
+msgstr "Connettiti a Contabilità in Cloud con le tue credenziali"
 
 #: admin/wcifr-settings-template.php:29
 msgid "Connect to Reviso"
-msgstr "Connettiti a Reviso"
+msgstr "Connettiti a Contabilità in Cloud"
 
 #: admin/wcifr-settings-template.php:30
 msgid "Disconnect from Reviso"
-msgstr "Disconnettiti da Reviso"
+msgstr "Disconnettiti da Contabilità in Cloud"
 
 #: admin/wcifr-suppliers-template.php:32
 msgid "Select your suppliers user role"
 msgstr "Seleziona il ruolo utente usato per i fornitori"
 
-#: includes/class-wcifr-products.php:576
+#: includes/class-wcifr-products.php:639
 #, php-format
 msgid "%d product(s) import process has begun"
 msgstr "Il processo di importazione di %d prodotti è iniziato"
 
-#: includes/class-wcifr-products.php:584
+#: includes/class-wcifr-products.php:646
 msgid "ERROR! There are not products to import"
 msgstr "ERRORE! Non ci sono prodotti da importare"
 

@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WC Exporter for Reviso\n"
-"POT-Creation-Date: 2021-06-21 16:37+0200\n"
+"POT-Creation-Date: 2022-12-22 15:03+0100\n"
 "PO-Revision-Date: 2016-05-26 13:25+0200\n"
 "Last-Translator: ilGhera <info@ilghera.com>\n"
 "Language-Team: ilGhera <info@ilghera.com>\n"
@@ -10,9 +10,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.2\n"
-"X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.1.1\n"
+"X-Poedit-Basepath: ..\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: __;_e;_;esc_html__;esc_html_e;esc_attr__;esc_attr_e\n"
 "X-Poedit-SearchPath-0: .\n"
@@ -92,7 +92,7 @@ msgid "Exclude product title"
 msgstr ""
 
 #: admin/wcifr-products-template.php:36
-msgid "Exclude title from products updates."
+msgid "Exclude title from products updates"
 msgstr ""
 
 #: admin/wcifr-products-template.php:40
@@ -100,7 +100,7 @@ msgid "Short description"
 msgstr ""
 
 #: admin/wcifr-products-template.php:43
-msgid "Use the excerpt as short product description."
+msgid "Use the excerpt as short product description"
 msgstr ""
 
 #: admin/wcifr-products-template.php:47
@@ -108,7 +108,7 @@ msgid "Exclude product description"
 msgstr ""
 
 #: admin/wcifr-products-template.php:51
-msgid "Exclude descriptions from products updates."
+msgid "Exclude descriptions from products updates"
 msgstr ""
 
 #: admin/wcifr-products-template.php:55
@@ -116,7 +116,7 @@ msgid "Products not available"
 msgstr ""
 
 #: admin/wcifr-products-template.php:59
-msgid "Avoid creating new products if not available in stock."
+msgid "Avoid creating new products if not available in stock"
 msgstr ""
 
 #: admin/wcifr-products-template.php:63
@@ -151,12 +151,12 @@ msgstr ""
 msgid "Select your suppliers user role"
 msgstr ""
 
-#: includes/class-wcifr-products.php:576
+#: includes/class-wcifr-products.php:639
 #, php-format
 msgid "%d product(s) import process has begun"
 msgstr ""
 
-#: includes/class-wcifr-products.php:584
+#: includes/class-wcifr-products.php:646
 msgid "ERROR! There are not products to import"
 msgstr ""
 
