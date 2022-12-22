@@ -53,7 +53,7 @@ class WCIFR_Admin {
 	 */
 	public function wcifr_add_menu() {
 
-		$wcifr_page = add_submenu_page( 'woocommerce', 'WCIFR Options', 'WC Importer for Reviso', 'manage_woocommerce', 'wc-importer-for-reviso', array( $this, 'wcifr_options' ) );
+		$wcifr_page = add_submenu_page( 'woocommerce', 'WCIFR Options', __( 'WC Importer for Reviso', 'wc-importer-for-reviso' ), 'manage_woocommerce', 'wc-importer-for-reviso', array( $this, 'wcifr_options' ) );
 
 		return $wcifr_page;
 
