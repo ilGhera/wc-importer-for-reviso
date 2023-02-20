@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WC Exporter for Reviso\n"
-"POT-Creation-Date: 2022-12-22 15:03+0100\n"
+"POT-Creation-Date: 2023-02-20 11:04+0100\n"
 "PO-Revision-Date: 2016-05-26 13:25+0200\n"
 "Last-Translator: ilGhera <info@ilghera.com>\n"
 "Language-Team: ilGhera <info@ilghera.com>\n"
@@ -20,6 +20,10 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-1: libraries\n"
 "X-Poedit-SearchPathExcluded-2: vendor\n"
 
+#: admin/class-wcifr-admin.php:56
+msgid "WC Importer for Reviso"
+msgstr ""
+
 #: admin/class-wcifr-admin.php:73
 msgid "It seems like you don't have permission to see this page"
 msgstr ""
@@ -28,7 +32,7 @@ msgstr ""
 msgid "ATTENTION! It seems like Woocommerce is not installed"
 msgstr ""
 
-#: admin/class-wcifr-admin.php:94
+#: admin/class-wcifr-admin.php:94 admin/ilghera-notice/extension.php:19
 msgid "WooCommerce Importer for Reviso - Premium"
 msgstr ""
 
@@ -64,6 +68,28 @@ msgstr ""
 
 #: admin/class-wcifr-admin.php:122
 msgid "Customers"
+msgstr ""
+
+#: admin/ilghera-notice/class-ilghera-notice.php:66
+msgid "Renew now"
+msgstr ""
+
+#: admin/ilghera-notice/class-ilghera-notice.php:66
+msgid "Get a license"
+msgstr ""
+
+#: admin/ilghera-notice/class-ilghera-notice.php:107
+msgid "Your license is <u>expired</u> and you're unable to receive updates."
+msgstr ""
+
+#: admin/ilghera-notice/class-ilghera-notice.php:123
+msgid ""
+"It seems like your license is <u>not valid</u> and you're unable to receive "
+"updates."
+msgstr ""
+
+#: admin/ilghera-notice/class-ilghera-notice.php:139
+msgid "You have not set up a license key and you cannot receive updates."
 msgstr ""
 
 #: admin/wcifr-customers-template.php:17 admin/wcifr-suppliers-template.php:17

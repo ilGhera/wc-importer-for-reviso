@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-12-23 18:38+0100\n"
-"PO-Revision-Date: 2022-12-23 18:40+0100\n"
+"POT-Creation-Date: 2023-02-20 11:05+0100\n"
+"PO-Revision-Date: 2023-02-20 11:19+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it_IT\n"
@@ -20,10 +20,8 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-3: css\n"
 
 #: admin/class-wcifr-admin.php:56
-#, fuzzy
-#| msgid "Import from Reviso"
 msgid "WC Importer for Reviso"
-msgstr "Importa da Contabilità in Cloud"
+msgstr "WC Importer for Contabilità in Cloud"
 
 #: admin/class-wcifr-admin.php:73
 msgid "It seems like you don't have permission to see this page"
@@ -33,7 +31,7 @@ msgstr "Sembra che tu non abbia i permessi per visualizzare questa pagina"
 msgid "ATTENTION! It seems like Woocommerce is not installed"
 msgstr "ATTENZIONE! Sembra che WooCommerce non sia installato"
 
-#: admin/class-wcifr-admin.php:94
+#: admin/class-wcifr-admin.php:94 admin/ilghera-notice/extension.php:19
 msgid "WooCommerce Importer for Reviso - Premium"
 msgstr "WooCommerce Importer for Contabilità in Cloud - Premium"
 
@@ -72,6 +70,32 @@ msgstr "Prodotti"
 #: admin/class-wcifr-admin.php:122
 msgid "Customers"
 msgstr "Clienti"
+
+#: admin/ilghera-notice/class-ilghera-notice.php:66
+msgid "Renew now"
+msgstr "Aggiorna ora"
+
+#: admin/ilghera-notice/class-ilghera-notice.php:66
+msgid "Get a license"
+msgstr "Ottieni una licenza"
+
+#: admin/ilghera-notice/class-ilghera-notice.php:107
+msgid "Your license is <u>expired</u> and you're unable to receive updates."
+msgstr ""
+"La tua licenza è <u>scaduta</u> e non sei in grado di ricevere aggiornamenti."
+
+#: admin/ilghera-notice/class-ilghera-notice.php:123
+msgid ""
+"It seems like your license is <u>not valid</u> and you're unable to receive "
+"updates."
+msgstr ""
+"Sembra che la tua licenza <u>non sia valida</u> e non sei in grado di "
+"ricevere aggiornamenti."
+
+#: admin/ilghera-notice/class-ilghera-notice.php:139
+msgid "You have not set up a license key and you cannot receive updates."
+msgstr ""
+"Non hai impostato una licenza e non sei in grado di ricevere aggiornamenti."
 
 #: admin/wcifr-customers-template.php:17 admin/wcifr-suppliers-template.php:17
 msgid "User role"
