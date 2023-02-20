@@ -4,3 +4,6 @@
 [submodule "libraries/action-scheduler"]
 	path = libraries/action-scheduler
 	url = https://github.com/woocommerce/action-scheduler.git
+[submodule "admin/ilghera-notice"]
+	path = admin/ilghera-notice
+	url = git@bitbucket.org:ilGhera/ilghera-notice.git
