@@ -40,6 +40,7 @@ function load_wc_importer_for_reviso() {
 
 	/*Files required*/
 	require_once( WCIFR_DIR . 'libraries/action-scheduler/action-scheduler.php' );
+	require_once( WCIFR_ADMIN . 'ilghera-notice/class-ilghera-notice.php' );
 	require_once( WCIFR_ADMIN . 'class-wcifr-admin.php' );
 	require_once( WCIFR_CLASSES . 'class-wcifr-temporary-data.php' );
 	require_once( WCIFR_INCLUDES . 'wcifr-functions.php' );
