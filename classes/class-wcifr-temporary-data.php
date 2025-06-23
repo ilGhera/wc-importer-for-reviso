@@ -6,6 +6,7 @@
  *
  * @author ilGhera
  * @package wc-importer-for-reviso-premium/classes
+ *
  * @since 0.9.0
  */
 class WCIFR_Temporary_Data {
@@ -30,13 +31,10 @@ class WCIFR_Temporary_Data {
 		if ( $init ) {
 
 			$this->db_tables();
-
         }
 
         $this->type = $type;
-
 	}
-
 
 	/**
 	 * Create the db table 
@@ -64,7 +62,6 @@ class WCIFR_Temporary_Data {
 			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
 			dbDelta( $sql );
-
 		}
 
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '$temporary_products_data'" ) != $temporary_products_data ) {
@@ -81,11 +78,8 @@ class WCIFR_Temporary_Data {
 			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
 			dbDelta( $sql );
-
 		}
-
     }
-
 
     /**
      * The DB table name
@@ -97,9 +91,7 @@ class WCIFR_Temporary_Data {
         $output = 'users' === $this->type ? 'wcifr_users_temporary_data' : 'wcifr_products_temporary_data';
 
         return $output;
-
     }
-
 
 	/**
 	 * Get data from the table
@@ -119,11 +111,8 @@ class WCIFR_Temporary_Data {
 		if ( isset( $results[0]['data'] ) ) {
 
 			return $results[0]['data'];
-
 		}
-
 	}
-
 
 	/**
 	 * Add temporary data to the table
@@ -152,11 +141,8 @@ class WCIFR_Temporary_Data {
 					'%s',
 				)
 			);
-
 		}
-
 	}
-
 
 	/**
 	 * Delete record from the table 
@@ -178,11 +164,8 @@ class WCIFR_Temporary_Data {
 				'%s',
 			)
 		);
-
 	}
-
-
-
 }
+
 new WCIFR_Temporary_Data( true );
 
