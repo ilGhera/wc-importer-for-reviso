@@ -8,6 +8,16 @@
  */
 class WCIFR_Users {
 
+    /**
+     * @var WCIFR_Temporary_Data
+     */
+    private $temporary_data;
+
+    /**
+     * @var WCIFR_Call
+     */
+    private $wcifr_call;
+
 	/**
 	 * Class constructor
 	 *

@@ -8,6 +8,13 @@
  */
 class WCIFR_Settings {
 
+    /**
+     * WCIFR Call
+     *
+     * @var WCIFR_Call
+     */
+    private $wcifr_call;
+
 	/**
 	 * Class constructor
 	 *

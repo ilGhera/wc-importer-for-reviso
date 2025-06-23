@@ -8,6 +8,51 @@
  */
 class WCIFR_Products {
 
+    /**
+     * @var WCIFR_Temporary_Data
+     */
+    public $temporary_data;
+
+    /**
+     * @var WCIFR_Call
+     */
+    public $wcifr_call;
+
+    /**
+     * @var string
+     */
+    public $post_status;
+
+    /**
+     * @var string
+     */
+    public $product_sku;
+
+    /**
+     * @var boolean
+     */
+    public $wc_prices_include_tax;
+
+    /**
+     * @var string
+     */
+    public $short_description;
+
+    /**
+     * @var boolean
+     */
+    public $exclude_title;
+
+    /**
+     * @var boolean
+     */
+    public $exclude_description;
+
+    /**
+     * @var boolean
+     */
+    public $products_not_available;
+
 	/**
 	 * Class constructor
 	 *

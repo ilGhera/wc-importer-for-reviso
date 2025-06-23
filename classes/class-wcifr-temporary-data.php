@@ -10,6 +10,13 @@
  */
 class WCIFR_Temporary_Data {
 
+    /**
+     * The type of data
+     *
+     * @var string
+     */
+    public $type;
+
 	/**
 	 * The constructor
 	 *
