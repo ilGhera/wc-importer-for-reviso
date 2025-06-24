@@ -13,6 +13,8 @@
  * Text Domain: wc-importer-for-reviso
  */
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Handles the plugin activation
  *
