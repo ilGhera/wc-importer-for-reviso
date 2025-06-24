@@ -4,54 +4,63 @@
  *
  * @author ilGhera
  * @package wc-importer-for-reviso/includes
+ *
+ * @since 0.9.0
+ */
+
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * WCIFR_Products
+ *
  * @since 0.9.0
  */
 class WCIFR_Products {
 
-    /**
-     * @var WCIFR_Temporary_Data
-     */
-    public $temporary_data;
+	/**
+	 * @var WCIFR_Temporary_Data
+	 */
+	public $temporary_data;
 
-    /**
-     * @var WCIFR_Call
-     */
-    public $wcifr_call;
+	/**
+	 * @var WCIFR_Call
+	 */
+	public $wcifr_call;
 
-    /**
-     * @var string
-     */
-    public $post_status;
+	/**
+	 * @var string
+	 */
+	public $post_status;
 
-    /**
-     * @var string
-     */
-    public $product_sku;
+	/**
+	 * @var string
+	 */
+	public $product_sku;
 
-    /**
-     * @var boolean
-     */
-    public $wc_prices_include_tax;
+	/**
+	 * @var boolean
+	 */
+	public $wc_prices_include_tax;
 
-    /**
-     * @var string
-     */
-    public $short_description;
+	/**
+	 * @var string
+	 */
+	public $short_description;
 
-    /**
-     * @var boolean
-     */
-    public $exclude_title;
+	/**
+	 * @var boolean
+	 */
+	public $exclude_title;
 
-    /**
-     * @var boolean
-     */
-    public $exclude_description;
+	/**
+	 * @var boolean
+	 */
+	public $exclude_description;
 
-    /**
-     * @var boolean
-     */
-    public $products_not_available;
+	/**
+	 * @var boolean
+	 */
+	public $products_not_available;
 
 	/**
 	 * Class constructor
@@ -64,7 +73,6 @@ class WCIFR_Products {
 
 			add_action( 'wp_ajax_wcifr-import-products', array( $this, 'import_products' ) );
 			add_action( 'wcifr_import_single_product_event', array( $this, 'import_single_product' ) );
-
 		}
 
 		$this->temporary_data         = new WCIFR_Temporary_Data( false, 'products' );
@@ -76,7 +84,6 @@ class WCIFR_Products {
 		$this->exclude_title          = get_option( 'wcifr-exclude-title' );
 		$this->exclude_description    = get_option( 'wcifr-exclude-description' );
 		$this->products_not_available = get_option( 'wcifr-products-not-available' );
-
 	}
 
 	/**
@@ -100,16 +107,13 @@ class WCIFR_Products {
 						$output = true;
 
 						continue;
-
 					}
 				}
 			}
 		}
 
 		return $output;
-
 	}
-
 
 	/**
 	 * Generate the short product description
@@ -130,13 +134,10 @@ class WCIFR_Products {
 		} else {
 
 			$output = $description;
-
 		}
 
 		return $output;
-
 	}
-
 
 	/**
 	 * Get all the products from Reviso
@@ -164,15 +165,12 @@ class WCIFR_Products {
 				} else {
 
 					continue;
-
 				}
 			}
 		}
 
 		return $output;
-
 	}
-
 
 	/**
 	 * Turn a multidimensional array into a sinple one
@@ -192,15 +190,12 @@ class WCIFR_Products {
 				if ( isset( $element['name'], $element['value'] ) ) {
 
 					$output[ $element['name'] ] = $element['value'];
-
 				}
 			}
 		}
 
 		return $output;
-
 	}
-
 
 	/**
 	 * Save the product import options
@@ -241,11 +236,8 @@ class WCIFR_Products {
 			update_option( 'wcifr-exclude-title', 0 );
 			update_option( 'wcifr-exclude-description', 0 );
 			update_option( 'wcifr-products-not-available', 0 );
-
 		}
-
 	}
-
 
 	/**
 	 * Get the product id by sku
@@ -266,9 +258,7 @@ class WCIFR_Products {
 		);
 
 		return $product_id;
-
 	}
-
 
 	/**
 	 * Create a new WooCommerce Tax Class
@@ -308,11 +298,8 @@ class WCIFR_Products {
 		if ( ! is_wp_error( $response ) ) {
 
 			return true;
-
 		}
-
 	}
-
 
 	/**
 	 * Create a new WooCommerce Tax Class
@@ -346,17 +333,13 @@ class WCIFR_Products {
 					'%s',
 				)
 			);
-
 		}
 
 		if ( $this->add_tax_rate( $vat_account, $class_name ) ) {
 
 			return $class_name;
-
 		}
-
 	}
-
 
 	/**
 	 * Get the first sales account number of product group
@@ -374,12 +357,9 @@ class WCIFR_Products {
 			if ( isset( $response->salesAccountsList[0]->salesAccount->accountNumber ) ) {
 
 				return $response->salesAccountsList[0]->salesAccount->accountNumber;
-
 			}
 		}
-
 	}
-
 
 	/**
 	 * Get the first sales account of product group
@@ -394,9 +374,7 @@ class WCIFR_Products {
 		$output               = $this->wcifr_call->call( 'get', 'accounts/' . $sales_account_number );
 
 		return $output;
-
 	}
-
 
 	/**
 	 * Get WC tax class by percentage rate
@@ -433,9 +411,7 @@ class WCIFR_Products {
 		}
 
 		return $output;
-
 	}
-
 
 	/**
 	 * Get the Reviso vat account applayed to the product
@@ -455,12 +431,9 @@ class WCIFR_Products {
 			if ( ! is_wp_error( $response ) ) {
 
 				return $response;
-
 			}
 		}
-
 	}
-
 
 	/**
 	 * Prepare the single product data for Reviso
@@ -488,7 +461,6 @@ class WCIFR_Products {
 
 				$vat_percentage = isset( $vat_account->ratePercentage ) ? $vat_account->ratePercentage : 0;
 				$tax_class      = $this->get_wc_tax_class( $vat_account );
-
 			}
 		}
 
@@ -502,7 +474,6 @@ class WCIFR_Products {
 
 			$price      = $get_price;
 			$sell_price = $get_sell_price;
-
 		}
 
 		/* Sku */
@@ -511,7 +482,6 @@ class WCIFR_Products {
 		if ( isset( $data->barCode ) && $this->product_sku ) {
 
 			$sku = $data->barCode;
-
 		}
 
 		/* Stock */
@@ -526,7 +496,6 @@ class WCIFR_Products {
 			$stock_status  = 0 < $available_qty ? 'instock' : 'outofstock';
 			$manage_stock  = 'yes';
 			$total_sales   = isset( $data->inventory->orderedByCustomers ) ? $data->inventory->orderedByCustomers : null;
-
 		}
 
 		$args = array(
@@ -546,20 +515,17 @@ class WCIFR_Products {
 			if ( $this->exclude_title ) {
 
 				$name = get_the_title( $id );
-
 			}
 
 			if ( $this->exclude_description ) {
 
 				$description = get_post_field( 'post_content', $id );
-
 			}
 		} else {
 
 			if ( $this->products_not_available && 'outofstock' === $stock_status ) {
 
 				return;
-
 			}
 		}
 
@@ -570,7 +536,6 @@ class WCIFR_Products {
 		if ( $this->short_description ) {
 
 			$args['post_excerpt'] = $this->wcifr_get_short_description( $description );
-
 		}
 
 		/* Insert product */
@@ -597,7 +562,6 @@ class WCIFR_Products {
 			} else {
 
 				update_post_meta( $post_id, '_price', $price );
-
 			}
 
 			/* Tax */
@@ -611,13 +575,10 @@ class WCIFR_Products {
 
 					update_post_meta( $post_id, '_tax_status', 'taxable' );
 					update_post_meta( $post_id, '_tax_class', $tax_class );
-
 				}
 			}
 		}
-
 	}
-
 
 	/**
 	 * Import single product from Reviso
@@ -633,9 +594,7 @@ class WCIFR_Products {
 
 		/* Delete temporary data */
 		$this->temporary_data->delete_data( $hash );
-
 	}
-
 
 	/**
 	 * Import Reviso products in WooCommerce
@@ -644,7 +603,7 @@ class WCIFR_Products {
 	 */
 	public function import_products() {
 
-		if ( isset( $_POST['wcifr-import-products-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcifr-import-products-nonce'] ), 'wcifr-import-products' ) ) {
+		if ( isset( $_POST['wcifr-import-products-nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['wcifr-import-products-nonce'] ) ), 'wcifr-import-products' ) ) {
 
 			$options = isset( $_POST['options'] ) ? $_POST['options'] : null;
 
@@ -675,7 +634,6 @@ class WCIFR_Products {
 						),
 						'wcifr_import_single_product'
 					);
-
 				}
 
 				$response[] = array(
@@ -690,17 +648,14 @@ class WCIFR_Products {
 					'error',
 					esc_html( __( 'ERROR! There are not products to import', 'wc-importer-for-reviso' ) ),
 				);
-
 			}
 
 			echo wp_json_encode( $response );
-
 		}
 
 		exit;
-
 	}
-
 }
+
 new WCIFR_Products( true );
 
