@@ -29,6 +29,7 @@ function load_wc_importer_for_reviso() {
 	load_plugin_textdomain( 'wc-importer-for-reviso', false, basename( dirname( __FILE__ ) ) . '/languages' );
 
 	/*Constants declaration*/
+    define( 'WCIFR_VERSION', '0.9.2' );
 	define( 'WCIFR_DIR', plugin_dir_path( __FILE__ ) );
 	define( 'WCIFR_URI', plugin_dir_url( __FILE__ ) );
 	define( 'WCIFR_FILE', __FILE__ );
