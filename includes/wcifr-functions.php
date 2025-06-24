@@ -4,70 +4,67 @@
  *
  * @author ilGhera
  * @package wc-importer-for-reviso/includes
+ *
  * @since 0.9.1
  */
+
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Returns the string passed less long than the limit specified
  *
  * @param  string $text  the full text.
  * @param  int    $limit the string length limit.
+ *
  * @return string
  */
 function wcifr_avoid_length_exceed( $text, $limit ) {
 
-    $output = $text;
+	$output = $text;
 
-    if ( strlen( $text ) > $limit ) {
+	if ( strlen( $text ) > $limit ) {
 
-        if ( 25 === intval( $limit ) ) {
+		if ( 25 === intval( $limit ) ) {
 
-            /*Product number (sku)*/
-            $output = substr( $text, 0, $limit );
+			/*Product number (sku)*/
+			$output = substr( $text, 0, $limit );
 
-        } else {
+		} else {
 
-            /*Product name and description*/
-            $output = substr( $text, 0, ( $limit - 4 ) ) . ' ...';
+			/*Product name and description*/
+			$output = substr( $text, 0, ( $limit - 4 ) ) . ' ...';
+		}
+	}
 
-        }
-
-    }
-
-    return $output;
-
+	return $output;
 }
-
 
 /**
  * Sanitize every single array element
  *
  * @param  array $array the array to sanitize.
+ *
  * @return array        the sanitized array.
  */
 function wcifr_sanitize_array( $array ) {
 
-    $output = array();
+	$output = array();
 
-    if ( is_array( $array ) && ! empty( $array ) ) {
+	if ( is_array( $array ) && ! empty( $array ) ) {
 
-        foreach ( $array as $key => $value ) {
+		foreach ( $array as $key => $value ) {
 
-            $output[ $key ] = sanitize_text_field( wp_unslash( $value ) );
+			$output[ $key ] = sanitize_text_field( wp_unslash( $value ) );
+		}
+	}
 
-        }
-
-    }
-
-    return $output;
-
+	return $output;
 }
-
 
 /**
  * Update checker
  */
-require( WCIFR_DIR . 'plugin-update-checker/plugin-update-checker.php' );
+require WCIFR_DIR . 'plugin-update-checker/plugin-update-checker.php';
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
 $wcifr_update_checker = PucFactory::buildUpdateChecker(
@@ -76,12 +73,12 @@ $wcifr_update_checker = PucFactory::buildUpdateChecker(
 	'wc-importer-for-reviso-premium'
 );
 
-
 /**
  * Secure update check with the Premium Key
  *
  * @param  array $query_args the default args.
- * @return array            the updated args
+ *
+ * @return array
  */
 function wcifr_secure_update_check( $query_args ) {
 
@@ -90,20 +87,19 @@ function wcifr_secure_update_check( $query_args ) {
 	if ( $key ) {
 
 		$query_args['premium-key'] = $key;
-
 	}
 
 	return $query_args;
-
 }
 $wcifr_update_checker->addQueryArgFilter( 'wcifr_secure_update_check' );
-
 
 /**
  * Plugin update message
  *
  * @param  array $plugin_data plugin information.
  * @param  array $response    available plugin update information.
+ *
+ * @return void
  */
 function wcifr_update_message( $plugin_data, $response ) {
 
@@ -119,8 +115,8 @@ function wcifr_update_message( $plugin_data, $response ) {
 
 		$decoded_key = explode( '|', base64_decode( $key ) );
 		$bought_date = date( 'd-m-Y', strtotime( $decoded_key[1] ) );
-		$limit = strtotime( $bought_date . ' + 365 day' );
-		$now = strtotime( 'today' );
+		$limit       = strtotime( $bought_date . ' + 365 day' );
+		$now         = strtotime( 'today' );
 
 		if ( $limit < $now ) {
 
@@ -129,9 +125,7 @@ function wcifr_update_message( $plugin_data, $response ) {
 		} elseif ( '9055' !== $decoded_key[2] ) {
 
 			$message = 'It seems like your <strong>Premium Key</strong> is not valid. Please, click <a href="https://www.ilghera.com/product/woocommerce-importer-for-reviso-premium/" target="_blank">here</a> for prices and details.';
-
 		}
-
 	}
 
 	$allowed_tags = array(
@@ -143,6 +137,6 @@ function wcifr_update_message( $plugin_data, $response ) {
 	);
 
 	echo ( $message ) ? '<br><span class="wcifr-alert">' . wp_kses( $message, $allowed_tags ) . '</span>' : '';
-
 }
 add_action( 'in_plugin_update_message-' . WCIFR_DIR_NAME . '/wc-importer-for-reviso.php', 'wcifr_update_message', 10, 2 );
+
