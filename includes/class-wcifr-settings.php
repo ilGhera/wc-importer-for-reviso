@@ -6,14 +6,22 @@
  * @package wc-importer-for-reviso/includes
  * @since 0.9.0
  */
+
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * WCIFR_Settings
+ *
+ * @since 0.9.0
+ */
 class WCIFR_Settings {
 
-    /**
-     * WCIFR Call
-     *
-     * @var WCIFR_Call
-     */
-    private $wcifr_call;
+	/**
+	 * WCIFR Call
+	 *
+	 * @var WCIFR_Call
+	 */
+	private $wcifr_call;
 
 	/**
 	 * Class constructor
@@ -28,11 +36,9 @@ class WCIFR_Settings {
 			add_action( 'wp_ajax_wcifr-check-connection', array( $this, 'check_connection_callback' ) );
 			add_action( 'wp_ajax_wcifr-disconnect', array( $this, 'disconnect_callback' ) );
 			add_action( 'admin_footer', array( $this, 'save_agt' ) );
-
 		}
 
 		$this->wcifr_call = new WCIFR_Call();
-
 	}
 
 	/**
@@ -45,16 +51,14 @@ class WCIFR_Settings {
 		$screen = get_current_screen();
 
 		if ( 'woocommerce_page_wc-importer-for-reviso' === $screen->id ) {
-            wp_enqueue_script( 'chosen', WCIFR_URI . '/vendor/harvesthq/chosen/chosen.jquery.min.js' );
-            wp_enqueue_script( 'tzcheckbox', WCIFR_URI . 'js/tzCheckbox/jquery.tzCheckbox/jquery.tzCheckbox.js', array( 'jquery' ) );
+			wp_enqueue_script( 'chosen', WCIFR_URI . '/vendor/harvesthq/chosen/chosen.jquery.min.js', array( 'jquery' ), WCIFR_VERSION, true );
+			wp_enqueue_script( 'tzcheckbox', WCIFR_URI . 'js/tzCheckbox/jquery.tzCheckbox/jquery.tzCheckbox.js', array( 'jquery' ), WCIFR_VERSION, true );
 
-            wp_enqueue_style( 'chosen-style', WCIFR_URI . '/vendor/harvesthq/chosen/chosen.min.css' );
-            wp_enqueue_style( 'font-awesome', '//use.fontawesome.com/releases/v5.8.1/css/all.css' );
-            wp_enqueue_style( 'tzcheckbox-style', WCIFR_URI . 'js/tzCheckbox/jquery.tzCheckbox/jquery.tzCheckbox.css' );
-        }
-
+			wp_enqueue_style( 'chosen-style', WCIFR_URI . '/vendor/harvesthq/chosen/chosen.min.css', array(), WCIFR_VERSION );
+			wp_enqueue_style( 'font-awesome', '//use.fontawesome.com/releases/v5.8.1/css/all.css', array(), WCIFR_VERSION );
+			wp_enqueue_style( 'tzcheckbox-style', WCIFR_URI . 'js/tzCheckbox/jquery.tzCheckbox/jquery.tzCheckbox.css', array(), WCIFR_VERSION );
+		}
 	}
-
 
 	/**
 	 * Check if the current page is the plugin options page
@@ -68,9 +72,7 @@ class WCIFR_Settings {
 		if ( isset( $screen->id ) && 'woocommerce_page_wc-importer-for-reviso' === $screen->id ) {
 			return true;
 		}
-
 	}
-
 
 	/**
 	 * Save the Agreement Grant Token in the db
@@ -84,9 +86,7 @@ class WCIFR_Settings {
 
 			update_option( 'wcifr-agt', $token );
 		}
-
 	}
-
 
 	/**
 	 * Deletes the Agreement Grant Token from the db
@@ -98,9 +98,7 @@ class WCIFR_Settings {
 		delete_option( 'wcifr-agt' );
 
 		exit;
-
 	}
-
 
 	/**
 	 * Display the status of the connection to Reviso
@@ -111,7 +109,7 @@ class WCIFR_Settings {
 	public function check_connection_callback( $return = false ) {
 
 		$response = $this->wcifr_call->call( 'get', 'self' );
-        
+
 		if ( isset( $response->httpStatusCode ) && isset( $response->message ) ) {
 
 			echo false;
@@ -125,14 +123,12 @@ class WCIFR_Settings {
 			} else {
 
 				echo '<h4 class="wcifr-connection-status"><span class="label label-success">' . esc_html( __( 'Connected', 'wc-importer-for-reviso' ) ) . '</span></h4>';
-
 			}
-
 		}
 
 		exit;
-
 	}
-
 }
+
 new WCIFR_Settings( true );
+
