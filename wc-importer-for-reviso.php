@@ -4,13 +4,16 @@
  * Plugin URI: https://www.ilghera.com/product/woocommerce-importer-for-reviso-premium
  * Description: Connect your store to Reviso and import orders, products, customers and suppliers.
  * Author: ilGhera
- * Version: 0.9.2
- * 
+ * Version: 1.0.0
+ * Requires at least: 5.0
+ * Tested up to: 6.8
+ * WC tested up to: 9
+ * Author: ilGhera
  * Author URI: https://ilghera.com
- * Requires at least: 4.0
- * Tested up to: 6.1
- * WC tested up to: 7
  * Text Domain: wc-importer-for-reviso
+ * Domain Path: /languages
+ *
+ * @package wc-importer-for-reviso-premium
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -31,7 +34,7 @@ function load_wc_importer_for_reviso() {
 	load_plugin_textdomain( 'wc-importer-for-reviso', false, basename( dirname( __FILE__ ) ) . '/languages' );
 
 	/*Constants declaration*/
-    define( 'WCIFR_VERSION', '0.9.2' );
+    define( 'WCIFR_VERSION', '1.0.0' );
 	define( 'WCIFR_DIR', plugin_dir_path( __FILE__ ) );
 	define( 'WCIFR_URI', plugin_dir_url( __FILE__ ) );
 	define( 'WCIFR_FILE', __FILE__ );
