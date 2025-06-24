@@ -90,3 +90,4 @@ class WCIFR_Call {
 		}
 	}
 }
+
