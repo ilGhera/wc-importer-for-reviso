@@ -4,14 +4,18 @@
  *
  * @author ilGhera
  * @package wc-importer-for-reviso/includes
+ *
  * @since 0.9.1
  */
+
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Returns the string passed less long than the limit specified
  *
  * @param  string $text  the full text.
  * @param  int    $limit the string length limit.
+ *
  * @return string
  */
 function wcifr_avoid_length_exceed( $text, $limit ) {
@@ -29,19 +33,17 @@ function wcifr_avoid_length_exceed( $text, $limit ) {
 
 			/*Product name and description*/
 			$output = substr( $text, 0, ( $limit - 4 ) ) . ' ...';
-
 		}
 	}
 
 	return $output;
-
 }
-
 
 /**
  * Sanitize every single array element
  *
  * @param  array $array the array to sanitize.
+ *
  * @return array        the sanitized array.
  */
 function wcifr_sanitize_array( $array ) {
@@ -53,14 +55,11 @@ function wcifr_sanitize_array( $array ) {
 		foreach ( $array as $key => $value ) {
 
 			$output[ $key ] = sanitize_text_field( wp_unslash( $value ) );
-
 		}
 	}
 
 	return $output;
-
 }
-
 
 /**
  * Go Premium button
@@ -86,6 +85,5 @@ function wcifr_go_premium() {
 	);
 
 	echo wp_kses( $output, $allowed );
-
 }
 

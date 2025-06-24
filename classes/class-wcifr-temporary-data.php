@@ -1,14 +1,28 @@
 <?php
 /**
- * WCIFR Temporary Data
- *
  * Handles temporary data coming from Reviso.
  *
  * @author ilGhera
  * @package wc-importer-for-reviso-premium/classes
+ *
+ * @since 0.9.0
+ */
+
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * WCIFR_Temporary_Data
+ *
  * @since 0.9.0
  */
 class WCIFR_Temporary_Data {
+
+	/**
+	 * The type of data
+	 *
+	 * @var string
+	 */
+	public $type;
 
 	/**
 	 * The constructor
@@ -23,13 +37,10 @@ class WCIFR_Temporary_Data {
 		if ( $init ) {
 
 			$this->db_tables();
-
 		}
 
 		$this->type = $type;
-
 	}
-
 
 	/**
 	 * Create the db table
@@ -42,7 +53,7 @@ class WCIFR_Temporary_Data {
 
 		$temporary_users_data = $wpdb->prefix . 'wcifr_users_temporary_data';
 
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '$temporary_users_data'" ) != $temporary_users_data ) {
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '$temporary_users_data'" ) !== $temporary_users_data ) {
 
 			$charset_collate = $wpdb->get_charset_collate();
 
@@ -56,11 +67,9 @@ class WCIFR_Temporary_Data {
 			require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 			dbDelta( $sql );
-
 		}
 
 	}
-
 
 	/**
 	 * The DB table name
@@ -74,7 +83,6 @@ class WCIFR_Temporary_Data {
 		return $output;
 
 	}
-
 
 	/**
 	 * Get data from the table
@@ -94,11 +102,8 @@ class WCIFR_Temporary_Data {
 		if ( isset( $results[0]['data'] ) ) {
 
 			return $results[0]['data'];
-
 		}
-
 	}
-
 
 	/**
 	 * Add temporary data to the table
@@ -114,7 +119,7 @@ class WCIFR_Temporary_Data {
 
 		$results = $this->get_data( $hash );
 
-		if ( null == $results ) {
+		if ( ! $results ) {
 
 			$wpdb->insert(
 				$wpdb->prefix . $this->table_name(),
@@ -127,11 +132,8 @@ class WCIFR_Temporary_Data {
 					'%s',
 				)
 			);
-
 		}
-
 	}
-
 
 	/**
 	 * Delete record from the table
@@ -153,11 +155,8 @@ class WCIFR_Temporary_Data {
 				'%s',
 			)
 		);
-
 	}
-
-
-
 }
+
 new WCIFR_Temporary_Data( true );
 

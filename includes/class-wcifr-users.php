@@ -4,9 +4,28 @@
  *
  * @author ilGhera
  * @package wc-importer-for-reviso/includes
+ *
+ * @since 0.9.0
+ */
+
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * WCIFR_Users
+ *
  * @since 0.9.0
  */
 class WCIFR_Users {
+
+	/**
+	 * @var WCIFR_Temporary_Data
+	 */
+	private $temporary_data;
+
+	/**
+	 * @var WCIFR_Call
+	 */
+	private $wcifr_call;
 
 	/**
 	 * Class constructor
@@ -21,14 +40,11 @@ class WCIFR_Users {
 			add_action( 'wp_ajax_wcifr-get-customers-groups', array( $this, 'get_customers_groups' ) );
 			add_action( 'wp_ajax_wcifr-get-suppliers-groups', array( $this, 'get_suppliers_groups' ) );
 			add_action( 'wcifr_import_single_user_event', array( $this, 'import_single_user' ), 10, 3 );
-
 		}
 
 		$this->temporary_data = new WCIFR_Temporary_Data( false, 'users' );
 		$this->wcifr_call     = new WCIFR_Call();
-
 	}
-
 
 	/**
 	 * Get the customers/ suppliers groups from Reviso
@@ -52,14 +68,11 @@ class WCIFR_Users {
 			foreach ( $groups->collection as $group ) {
 
 				$output[ $group->$field_name ] = $group->name;
-
 			}
 		}
 
 		return $output;
-
 	}
-
 
 	/**
 	 * Callback - Get suppliers groups
@@ -67,12 +80,11 @@ class WCIFR_Users {
 	public function get_suppliers_groups() {
 
 		$output = $this->get_user_groups( 'suppliers' );
+
 		echo wp_json_encode( $output );
 
 		exit;
-
 	}
-
 
 	/**
 	 * Callback - Get customers groups
@@ -80,12 +92,11 @@ class WCIFR_Users {
 	public function get_customers_groups() {
 
 		$output = $this->get_user_groups( 'customers' );
+
 		echo wp_json_encode( $output );
 
 		exit;
-
 	}
-
 
 	/**
 	 * Get province
@@ -105,12 +116,9 @@ class WCIFR_Users {
 			if ( isset( $province->code ) ) {
 
 				return $province->code;
-
 			}
 		}
-
 	}
-
 
 	/**
 	 * Prepare the single user data to import in WordPress
@@ -137,7 +145,6 @@ class WCIFR_Users {
 				'last_name'    => $name_parts[1],
 				'display_name' => isset( $data->name ) ? $data->name : null,
 				'user_url'     => isset( $data->website ) ? $data->website : null,
-
 			);
 
 			/* Update user if already exists */
@@ -150,7 +157,6 @@ class WCIFR_Users {
 			} else {
 
 				$args['user_pass'] = wp_generate_password();
-
 			}
 
 			$extras = array(
@@ -172,11 +178,8 @@ class WCIFR_Users {
 				'args'   => $args,
 				'extras' => $extras,
 			);
-
 		}
-
 	}
-
 
 	/**
 	 * Import single user from Reviso
@@ -201,21 +204,17 @@ class WCIFR_Users {
 					foreach ( $data['extras'] as $key => $value ) {
 
 						update_user_meta( $user_id, $key, $value );
-
 					}
 				}
 			} else {
 
 				error_log( 'WCIFR ERROR | Users | ' . $user_id->get_error_message() );
-
 			}
 		}
 
 		/* Delete temporary data */
 		$this->temporary_data->delete_data( $hash );
-
 	}
-
 
 	/**
 	 * Import Reviso users as customers/ suppliers
@@ -224,13 +223,13 @@ class WCIFR_Users {
 	 */
 	public function import_users() {
 
-		if ( isset( $_POST['wcifr-import-users-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcifr-import-users-nonce'] ), 'wcifr-import-users' ) ) {
+		if ( isset( $_POST['wcifr-import-users-nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['wcifr-import-users-nonce'] ) ), 'wcifr-import-users' ) ) {
 
 			$type   = isset( $_POST['type'] ) ? sanitize_text_field( wp_unslash( $_POST['type'] ) ) : '';
 			$role   = isset( $_POST['role'] ) ? sanitize_text_field( wp_unslash( $_POST['role'] ) ) : '';
 			$groups = isset( $_POST['groups'] ) && is_array( $_POST['groups'] ) ? sanitize_array( $_POST['groups'] ) : ''; // Temp.
 
-			/*Salvo le impostazioni nel database*/
+			/* Save options in the db */
 			update_option( 'wcifr-' . $type . '-role', $role );
 			update_option( 'wcifr-' . $type . '-groups', $groups ); // Temp.
 
@@ -264,7 +263,6 @@ class WCIFR_Users {
 							),
 							'wcifr_import_single_user'
 						);
-
 					}
 				}
 
@@ -275,15 +273,13 @@ class WCIFR_Users {
 					esc_html( sprintf( __( '%1$d %2$s(s) import process has begun', 'wc-importer-for-reviso' ), $count, $message_type ) ),
 				);
 
-				echo wp_json_encode( $response );
-
+				echo json_encode( $response );
 			}
 		}
 
 		exit;
-
 	}
-
 }
+
 new WCIFR_Users( true );
 

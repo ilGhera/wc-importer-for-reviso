@@ -4,6 +4,15 @@
  *
  * @author ilGhera
  * @package wc-importer-for-reviso/includes
+ *
+ * @since 0.9.0
+ */
+
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * WCIFR_Call
+ *
  * @since 0.9.0
  */
 class WCIFR_Call {
@@ -15,7 +24,6 @@ class WCIFR_Call {
 	 */
 	private $base_url = 'https://rest.reviso.com/';
 
-
 	/**
 	 * Get the Agreement Token from the db
 	 *
@@ -26,9 +34,7 @@ class WCIFR_Call {
 		$output = get_option( 'wcifr-agt' );
 
 		return $output;
-
 	}
-
 
 	/**
 	 * Define the headers to use in every API call
@@ -45,7 +51,6 @@ class WCIFR_Call {
 
 		return $output;
 	}
-
 
 	/**
 	 * The call
@@ -82,9 +87,7 @@ class WCIFR_Call {
 
 			/*Print the error to the log*/
 			error_log( 'WCIFR | WP ERROR: ' . print_r( $response, true ) );
-
 		}
-
 	}
-
 }
+

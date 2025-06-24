@@ -4,6 +4,15 @@
  *
  * @author ilGhera
  * @package wc-importer-for-reviso/admin
+ *
+ * @since 0.9.0
+ */
+
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * WCIFR_Admin
+ *
  * @since 0.9.0
  */
 class WCIFR_Admin {
@@ -15,9 +24,7 @@ class WCIFR_Admin {
 
 		add_action( 'admin_menu', array( $this, 'wcifr_add_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'wcifr_register_scripts' ) );
-
 	}
-
 
 	/**
 	 * Scripts and style sheets
@@ -27,20 +34,20 @@ class WCIFR_Admin {
 	public function wcifr_register_scripts() {
 
 		$screen = get_current_screen();
+
 		if ( 'woocommerce_page_wc-importer-for-reviso' === $screen->id ) {
 
 			/*js*/
 			wp_enqueue_script( 'wcifr-js', WCIFR_URI . 'js/wcifr.js', array( 'jquery' ), '1.0', true );
 
 			/*css*/
-			wp_enqueue_style( 'bootstrap-iso', plugin_dir_url( __DIR__ ) . 'css/bootstrap-iso.css', array(), '1.0' );
+			wp_enqueue_style( 'bootstrap-iso', plugin_dir_url( __DIR__ ) . 'css/bootstrap-iso.css', array(), WCIFR_VERSION );
 
 		}
 
-		wp_enqueue_style( 'wcifr-style', WCIFR_URI . 'css/wc-importer-for-reviso.css', array(), '1.0' );
+		wp_enqueue_style( 'wcifr-style', WCIFR_URI . 'css/wc-importer-for-reviso.css', array(), WCIFR_VERSION );
 
 	}
-
 
 	/**
 	 * Menu page
@@ -52,9 +59,7 @@ class WCIFR_Admin {
 		$wcifr_page = add_submenu_page( 'woocommerce', 'WCIFR Options', __( 'WC Importer for Reviso', 'wc-importer-for-reviso' ), 'manage_woocommerce', 'wc-importer-for-reviso', array( $this, 'wcifr_options' ) );
 
 		return $wcifr_page;
-
 	}
-
 
 	/**
 	 * Options page
@@ -67,20 +72,20 @@ class WCIFR_Admin {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
 
 			wp_die( esc_html( __( 'It seems like you don\'t have permission to see this page', 'wc-importer-for-reviso' ) ) );
-
 		}
 
 		/*Page template start*/
 		echo '<div class="wrap">';
 			echo '<div class="wrap-left">';
 
-		/*Check if WooCommerce is installed ancd activated*/
+		/*Check if WooCommerce is installed and activated*/
 		if ( ! class_exists( 'WooCommerce' ) ) {
 			echo '<div id="message" class="error">';
 				echo '<p>';
 					echo '<strong>' . esc_html( __( 'ATTENTION! It seems like Woocommerce is not installed', 'wc-importer-for-reviso' ) ) . '</strong>';
 				echo '</p>';
 			echo '</div>';
+
 			exit;
 		}
 
@@ -143,8 +148,8 @@ class WCIFR_Admin {
 			echo '<div class="clear"></div>';
 
 		echo '</div>';
-
 	}
-
 }
+
 new WCIFR_Admin();
+
