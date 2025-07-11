@@ -56,7 +56,7 @@ class WCIFR_Settings {
 			wp_enqueue_script( 'tzcheckbox', WCIFR_URI . 'js/tzCheckbox/jquery.tzCheckbox/jquery.tzCheckbox.js', array( 'jquery' ), WCIFR_VERSION, true );
 
 			wp_enqueue_style( 'chosen-style', WCIFR_URI . '/vendor/harvesthq/chosen/chosen.min.css', array(), WCIFR_VERSION );
-			wp_enqueue_style( 'font-awesome', WCIFR_URI . '/libraries/fontawesome/css/all.min.css', array(), WCIFR_VERSION );
+			wp_enqueue_style( 'wcifr-font-awesome', WCIFR_URI . '/libraries/fontawesome/css/all.min.css', array(), WCIFR_VERSION );
 			wp_enqueue_style( 'tzcheckbox-style', WCIFR_URI . 'js/tzCheckbox/jquery.tzCheckbox/jquery.tzCheckbox.css', array(), WCIFR_VERSION );
 		}
 	}
