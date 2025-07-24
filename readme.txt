@@ -1,8 +1,8 @@
 === ilGhera WooCommerce Importer for Reviso ===
 Contributors: ghera74
 Tags: Reviso, Contabilità in Cloud, Team System, Danea Easyfatt, Fatturazione
-Version: 1.0.1
-Stable tag: 1.0.1
+Version: 1.0.2
+Stable tag: 1.0.2
 Requires at least: 5.0
 Tested up to: 6.8
 WC tested up to: 9
@@ -58,6 +58,17 @@ This plugin sends data to an external service, like the products bought by the u
 4. Import products
 
 == Changelog ==
+
+= 1.0.2 =
+Release Date: 24 July 2025
+
+    * Enhancement: Corrected user role name translation for improved internationalization.
+    * Security: Prevented direct access to PHP template files.
+    * Code Quality: Improved code prefixing to prevent conflicts:
+    * Renamed the main plugin initialization function (load_wc_importer_for_reviso) to wcifr_init().
+    * Applied coding standards to WCIFR_Users class methods.
+    * Refactor: Removed manual text domain loading (load_plugin_textdomain), now automatically handled by WordPress.org.
+
 
 = 1.0.1 =
 Release Date: 1 July 2025
