@@ -34,9 +34,6 @@ function load_wc_importer_for_reviso() {
 		require_once ABSPATH . '/wp-admin/includes/plugin.php';
 	}
 
-	/*Internationalization*/
-	load_plugin_textdomain( 'wc-importer-for-reviso', false, basename( dirname( __FILE__ ) ) . '/languages' );
-
 	/*Constants declaration*/
     define( 'WCIFR_VERSION', '1.0.0' );
 	define( 'WCIFR_DIR', plugin_dir_path( __FILE__ ) );
