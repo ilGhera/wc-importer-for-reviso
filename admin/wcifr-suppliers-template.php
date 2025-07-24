@@ -7,6 +7,7 @@
  * @since 0.9.0
  */
 
+defined( 'ABSPATH' ) || exit;
 ?>
 
 <!-- Export form -->
