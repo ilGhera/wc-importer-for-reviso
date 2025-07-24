@@ -27,7 +27,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @return void
  */
-function load_wc_importer_for_reviso() {
+function wcifr_init() {
 
 	/*Function check */
 	if ( ! function_exists( 'is_plugin_active' ) ) {
@@ -55,7 +55,7 @@ function load_wc_importer_for_reviso() {
 	require_once WCIFR_INCLUDES . 'class-wcifr-users.php';
 
 }
-add_action( 'after_setup_theme', 'load_wc_importer_for_reviso', 1 );
+add_action( 'after_setup_theme', 'wcifr_init', 1 );
 
 /**
  * HPOS compatibility
