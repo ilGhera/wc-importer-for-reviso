@@ -26,7 +26,11 @@ defined( 'ABSPATH' ) || exit;
 					$customers_role = get_option( 'wcifr-customers-role' );
 
 					foreach ( $roles as $key => $value ) {
-						echo '<option value="' . esc_attr( $key ) . '"' . ( $key === $customers_role ? ' selected="selected"' : '' ) . '> ' . esc_html( __( $value, 'woocommerce' ) ) . '</option>';
+
+                        /* Translate the user role name */
+						$translated_role_name = translate_user_role( $value );
+
+						echo '<option value="' . esc_attr( $key ) . '"' . ( $key === $customers_role ? ' selected="selected"' : '' ) . '> ' . esc_html( $translated_role_name ) . '</option>';
 					}
 					?>
 				</select>
