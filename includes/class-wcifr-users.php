@@ -273,7 +273,7 @@ class WCIFR_Users {
 					esc_html( sprintf( __( '%1$d %2$s(s) import process has begun', 'wc-importer-for-reviso' ), $count, $message_type ) ),
 				);
 
-				echo json_encode( $response );
+				echo wp_json_encode( $response );
 			}
 		}
 
