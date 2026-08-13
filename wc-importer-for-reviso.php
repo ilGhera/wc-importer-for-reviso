@@ -7,7 +7,7 @@
  * Stable tag: 1.0.2
  * Requires at least: 5.0
  * Tested up to: 6.8
- * WC tested up to: 9
+ * WC tested up to: 11.0.1
  * Requires Plugins: woocommerce
  * Author: ilGhera
  * Author URI: https://ilghera.com
