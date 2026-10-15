@@ -1,8 +1,8 @@
 === ilGhera WooCommerce Importer for Reviso ===
 Contributors: ghera74
 Tags: Reviso, Contabilità in Cloud, Team System, Danea Easyfatt, Fatturazione
-Version: 1.0.8
-Stable tag: 1.0.8
+Version: 1.0.9
+Stable tag: 1.0.9
 Requires at least: 5.0
 Tested up to: 7.1
 WC tested up to: 11.2.1
@@ -58,6 +58,12 @@ This plugin sends data to an external service, like the products bought by the u
 4. Import products
 
 == Changelog ==
+
+= 1.0.9 =
+Release Date: 15 October 2026
+
+    * Compatibility: WooCommerce 11.2.1
+
 
 = 1.0.8 =
 Release Date: 8 October 2026
