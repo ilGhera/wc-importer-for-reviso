@@ -5,7 +5,7 @@ Version: 1.0.10
 Stable tag: 1.0.10
 Requires at least: 5.0
 Tested up to: 7.1
-WC tested up to: 11.2.2
+WC tested up to: 11.3.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
