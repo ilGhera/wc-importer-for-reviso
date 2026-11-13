@@ -36,9 +36,9 @@ class WCIFR_Users {
 
 		if ( $init ) {
 
-			add_action( 'wp_ajax_wcifr-import-users', array( $this, 'import_users' ) );
-			add_action( 'wp_ajax_wcifr-get-customers-groups', array( $this, 'get_customers_groups' ) );
-			add_action( 'wp_ajax_wcifr-get-suppliers-groups', array( $this, 'get_suppliers_groups' ) );
+			add_action( 'wp_ajax_wcifr-import-users', array( $this, 'ajax_import_users' ) );
+			add_action( 'wp_ajax_wcifr-get-customers-groups', array( $this, 'ajax_get_customers_groups' ) );
+			add_action( 'wp_ajax_wcifr-get-suppliers-groups', array( $this, 'ajax_get_suppliers_groups' ) );
 			add_action( 'wcifr_import_single_user_event', array( $this, 'import_single_user' ), 10, 3 );
 		}
 
@@ -278,6 +278,60 @@ class WCIFR_Users {
 		}
 
 		exit;
+	}
+
+	/**
+	 * Ajax entry point for import_users(): capability and nonce checks
+	 *
+	 * @return void
+	 */
+	public function ajax_import_users() {
+
+		$this->verify_ajax_request( 'wcifr-import-users', 'wcifr-import-users-nonce' );
+
+		$this->import_users();
+	}
+
+	/**
+	 * Ajax entry point for get_customers_groups(): capability and nonce checks
+	 *
+	 * @return void
+	 */
+	public function ajax_get_customers_groups() {
+
+		$this->verify_ajax_request( 'wcifr-get-customers-groups', 'nonce' );
+
+		$this->get_customers_groups();
+	}
+
+	/**
+	 * Ajax entry point for get_suppliers_groups(): capability and nonce checks
+	 *
+	 * @return void
+	 */
+	public function ajax_get_suppliers_groups() {
+
+		$this->verify_ajax_request( 'wcifr-get-suppliers-groups', 'nonce' );
+
+		$this->get_suppliers_groups();
+	}
+
+	/**
+	 * Check the user capability and the nonce of an Ajax request
+	 *
+	 * @param string $nonce_action the nonce action.
+	 * @param string $nonce_field  the name of the POST field with the nonce.
+	 *
+	 * @return void
+	 */
+	private function verify_ajax_request( $nonce_action, $nonce_field ) {
+
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+
+			wp_send_json_error( null, 403 );
+		}
+
+		check_ajax_referer( $nonce_action, $nonce_field );
 	}
 }
 

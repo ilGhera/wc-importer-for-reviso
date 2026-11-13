@@ -33,11 +33,21 @@ defined( 'ABSPATH' ) || exit;
 </form>
 
 <?php
+/*Nonce*/
+$disconnect_nonce       = wp_create_nonce( 'wcifr-disconnect' );
+$check_connection_nonce = wp_create_nonce( 'wcifr-check-connection' );
+$customers_groups_nonce = wp_create_nonce( 'wcifr-get-customers-groups' );
+$suppliers_groups_nonce = wp_create_nonce( 'wcifr-get-suppliers-groups' );
+
 /*Pass data to the script file*/
 wp_localize_script(
 	'wcifr-js',
 	'wcifrSettings',
 	array(
-		'responseLoading' => WCIFR_URI . 'images/loader.gif',
+		'responseLoading'      => WCIFR_URI . 'images/loader.gif',
+		'disconnectNonce'      => $disconnect_nonce,
+		'checkConnectionNonce' => $check_connection_nonce,
+		'customersGroupsNonce' => $customers_groups_nonce,
+		'suppliersGroupsNonce' => $suppliers_groups_nonce,
 	)
 );

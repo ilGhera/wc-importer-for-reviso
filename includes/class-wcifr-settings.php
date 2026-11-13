@@ -34,7 +34,7 @@ class WCIFR_Settings {
 		if ( $init ) {
 
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
-			add_action( 'wp_ajax_wcifr-check-connection', array( $this, 'check_connection_callback' ) );
+			add_action( 'wp_ajax_wcifr-check-connection', array( $this, 'ajax_check_connection_callback' ) );
 			add_action( 'wp_ajax_wcifr-disconnect', array( $this, 'disconnect_callback' ) );
 			add_action( 'admin_footer', array( $this, 'save_agt' ) );
 		}
@@ -96,6 +96,12 @@ class WCIFR_Settings {
 	 */
 	public function disconnect_callback() {
 
+		check_ajax_referer( 'wcifr-disconnect', 'nonce' );
+
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_die( -1, 403 );
+		}
+
 		delete_option( 'wcifr-agt' );
 
 		exit;
@@ -128,6 +134,36 @@ class WCIFR_Settings {
 		}
 
 		exit;
+	}
+
+	/**
+	 * Ajax entry point for check_connection_callback(): capability and nonce checks
+	 *
+	 * @return void
+	 */
+	public function ajax_check_connection_callback() {
+
+		$this->verify_ajax_request( 'wcifr-check-connection', 'nonce' );
+
+		$this->check_connection_callback();
+	}
+
+	/**
+	 * Check the user capability and the nonce of an Ajax request
+	 *
+	 * @param string $nonce_action the nonce action.
+	 * @param string $nonce_field  the name of the POST field with the nonce.
+	 *
+	 * @return void
+	 */
+	private function verify_ajax_request( $nonce_action, $nonce_field ) {
+
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+
+			wp_send_json_error( null, 403 );
+		}
+
+		check_ajax_referer( $nonce_action, $nonce_field );
 	}
 }
 

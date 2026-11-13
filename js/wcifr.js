@@ -145,7 +145,8 @@ var wcifrController = function() {
 		jQuery(function($){
 
 			var data = {
-				'action': 'wcifr-check-connection'
+				'action': 'wcifr-check-connection',
+				'nonce': wcifrSettings.checkConnectionNonce
 			}
 
 			$.post(ajaxurl, data, function(response){
@@ -186,7 +187,8 @@ var wcifrController = function() {
 			$(document).on('click', '.wcifr-disconnect', function(){
 
 				var data = {
-					'action': 'wcifr-disconnect'
+					'action': 'wcifr-disconnect',
+					'nonce': wcifrSettings.disconnectNonce
 				}
 
 				$.post(ajaxurl, data, function(response){
@@ -492,6 +494,7 @@ var wcifrController = function() {
 
 			var data = {
 				'action': 'wcifr-get-' + type + '-groups',
+				'nonce': 'customers' === type ? wcifrSettings.customersGroupsNonce : wcifrSettings.suppliersGroupsNonce,
 				'confirm': 'yes' 
 			}
 
